@@ -1,5 +1,8 @@
-export async function onRequestGet() {
-  return new Response(JSON.stringify({ ok: true, ts: Date.now() }), {
-    headers: { "content-type": "application/json; charset=utf-8" },
-  });
+export async function onRequest({ env }) {
+  return new Response(JSON.stringify({
+    ok: true,
+    hasAdminToken: !!env.ADMIN_TOKEN,
+    hasDB: !!env.DB,
+    hasFILES: !!env.FILES,
+  }), { headers: { "content-type": "application/json; charset=utf-8" }});
 }
