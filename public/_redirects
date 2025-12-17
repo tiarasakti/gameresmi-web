@@ -1,0 +1,7 @@
+/admin/upload  /admin/upload.html  200
+/admin/upload/ /admin/upload.html  200
+
+/admin/manage  /admin/manage.html  200
+/admin/manage/ /admin/manage.html  200
+
+/*            /index.html          200
