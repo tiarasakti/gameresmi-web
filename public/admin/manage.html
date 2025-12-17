@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Kelola Game • Admin</title>
+  <style>
+    :root { color-scheme: dark; }
+    body{font-family:system-ui;margin:0;background:#0b1020;color:#e9eeff}
+    .wrap{max-width:1200px;margin:28px auto;padding:0 16px}
+    .card{background:#121a33;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:18px}
+    h1{margin:0 0 10px;font-size:20px}
+    .muted{opacity:.8;font-size:12px}
+    input,textarea,button,select{font:inherit}
+    input,textarea,select{
+      padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.15);
+      background:#0e1630;color:#e9eeff;box-sizing:border-box
+    }
+    textarea{min-height:90px;resize:vertical}
+    .row{display:grid;grid-template-columns: 1.2fr 1fr 1fr 1fr;gap:10px;align-items:end}
+    .btn{display:inline-flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;border:0;background:#4aa3ff;color:#071022;cursor:pointer;font-weight:700}
+    .btn:disabled{opacity:.6;cursor:not-allowed}
+    .btn.secondary{background:rgba(255,255,255,.10);color:#e9eeff;border:1px solid rgba(255,255,255,.12)}
+    .btn.danger{background:#ff5b6e;color:#1a0b10}
+    table{width:100%;border-collapse:collapse;margin-top:12px}
+    th,td{padding:10px;border-bottom:1px solid rgba(255,255,255,.10);vertical-align:top}
+    th{font-size:12px;opacity:.85;text-align:left}
+    .pill{display:inline-block;padding:3px 8px;border-radius:999px;background:rgba(255,255,255,.08);font-size:12px}
+    .mono{font-family:ui-monospace,Menlo,Consolas,monospace}
+    .right{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+    .topbar{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+    .pager{display:flex;gap:8px;align-items:center;justify-content:flex-end;margin-top:12px}
+    dialog{border:1px solid rgba(255,255,255,.15);border-radius:14px;background:#0e1630;color:#e9eeff;max-width:720px;width:100%}
+    dialog::backdrop{background:rgba(0,0,0,.55)}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .grid1{display:grid;grid-template-columns:1fr;gap:10px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="topbar">
+        <div>
+          <h1>Kelola Game</h1>
+          <div class="muted">List dari D1. Aksi hapus bisa (opsional) ikut hapus file di R2.</div>
+        </div>
+        <div class="right">
+          <a class="btn secondary" href="/admin/upload.html">Ke Upload</a>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:12px">
+        <div>
+          <div class="muted" style="margin:0 0 6px">ADMIN_TOKEN (Bearer)</div>
+          <input id="token" type="password" placeholder="Tempel token (tidak disimpan)" />
+        </div>
+        <div>
+          <div class="muted" style="margin:0 0 6px">Cari (judul / slug)</div>
+          <input id="q" placeholder="mis: cats / gta" />
+        </div>
+        <div>
+          <div class="muted" style="margin:0 0 6px">Filter</div>
+          <select id="published">
+            <option value="all">Semua</option>
+            <option value="1">Published</option>
+            <option value="0">Draft</option>
+          </select>
+        </div>
+        <div class="right">
+          <button id="btnLoad" class="btn">Load</button>
+        </div>
+      </div>
+
+      <div id="status" class="muted" style="margin-top:10px"></div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Slug</th>
+            <th>Title</th>
+            <th>Publish</th>
+            <th>Updated</th>
+            <th>File</th>
+            <th style="text-align:right">Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="tbody">
+          <tr><td colspan="6" class="muted">Klik <b>Load</b> untuk mengambil data.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="pager">
+        <button id="prev" class="btn secondary">Prev</button>
+        <span class="pill">Page <span id="page">1</span> / <span id="pages">1</span></span>
+        <button id="next" class="btn secondary">Next</button>
+      </div>
+    </div>
+  </div>
+
+  <dialog id="dlg">
+    <form method="dialog" class="card" style="background:transparent;border:0;padding:0">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
+        <div>
+          <h1 style="margin:0">Edit Game</h1>
+          <div class="muted">Slug tidak bisa diubah (biar konsisten link).</div>
+        </div>
+        <button class="btn secondary" value="cancel">Tutup</button>
+      </div>
+
+      <div class="grid2" style="margin-top:12px">
+        <div>
+          <div class="muted" style="margin:0 0 6px">Slug</div>
+          <input id="e_slug" class="mono" readonly />
+        </div>
+        <div>
+          <div class="muted" style="margin:0 0 6px">Published</div>
+          <select id="e_pub">
+            <option value="1">Ya</option>
+            <option value="0">Tidak (draft)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid1" style="margin-top:10px">
+        <div>
+          <div class="muted" style="margin:0 0 6px">Title</div>
+          <input id="e_title" />
+        </div>
+      </div>
+
+      <div class="grid2" style="margin-top:10px">
+        <div>
+          <div class="muted" style="margin:0 0 6px">Genre</div>
+          <input id="e_genre" />
+        </div>
+        <div>
+          <div class="muted" style="margin:0 0 6px">Platform</div>
+          <input id="e_platform" />
+        </div>
+      </div>
+
+      <div class="grid1" style="margin-top:10px">
+        <div>
+          <div class="muted" style="margin:0 0 6px">Cover URL</div>
+          <input id="e_cover" />
+        </div>
+        <div>
+          <div class="muted" style="margin:0 0 6px">Short desc</div>
+          <textarea id="e_desc"></textarea>
+        </div>
+      </div>
+
+      <div class="right" style="margin-top:12px">
+        <label class="muted" style="display:flex;align-items:center;gap:8px">
+          <input type="checkbox" id="delFile" />
+          Saat delete, hapus file R2 juga
+        </label>
+        <button type="button" id="btnDelete" class="btn danger">Delete</button>
+        <button type="button" id="btnSave" class="btn">Save</button>
+      </div>
+
+      <div id="dlgStatus" class="muted" style="margin-top:10px"></div>
+    </form>
+  </dialog>
+
+<script>
+  const $ = (id) => document.getElementById(id);
+  let state = { page: 1, limit: 15, total: 0, items: [] };
+
+  function esc(s){ return String(s??"").replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+  function fmtBytes(n){
+    n = Number(n||0); const u=["B","KB","MB","GB","TB"]; let i=0;
+    while(n>=1024 && i<u.length-1){ n/=1024; i++; }
+    return (i===0? n.toFixed(0): n.toFixed(2))+" "+u[i];
+  }
+
+  async function api(path, { method="GET", token, body } = {}) {
+    const h = new Headers();
+    h.set("Authorization", `Bearer ${token}`);
+    if (body) h.set("content-type", "application/json; charset=utf-8");
+
+    const res = await fetch(path, {
+      method,
+      headers: h,
+      body: body ? JSON.stringify(body) : undefined,
+    });
+
+    const text = await res.text();
+    let data = null;
+    try { data = text ? JSON.parse(text) : null; } catch {}
+    if (!res.ok) throw new Error(`${res.status} ${(data && data.error) ? data.error : (text || res.statusText)}`);
+    return data;
+  }
+
+  function render() {
+    const tb = $("tbody");
+    if (!state.items.length) {
+      tb.innerHTML = `<tr><td colspan="6" class="muted">Kosong.</td></tr>`;
+      return;
+    }
+    tb.innerHTML = state.items.map(it => {
+      const pub = Number(it.is_published) === 1;
+      return `
+        <tr>
+          <td class="mono">${esc(it.slug)}</td>
+          <td>${esc(it.title)}</td>
+          <td><span class="pill">${pub ? "Published" : "Draft"}</span></td>
+          <td class="mono">${esc(it.updated_at || "")}</td>
+          <td class="mono">
+            ${esc(it.file_key || "")}<br>
+            <span class="muted">${esc(it.file_name||"")} • ${fmtBytes(it.file_size_bytes||0)}</span>
+          </td>
+          <td style="text-align:right">
+            <button class="btn secondary" data-act="edit" data-slug="${esc(it.slug)}">Edit</button>
+            <button class="btn secondary" data-act="toggle" data-slug="${esc(it.slug)}">${pub ? "Unpublish" : "Publish"}</button>
+          </td>
+        </tr>
+      `;
+    }).join("");
+  }
+
+  async function load() {
+    const token = $("token").value.trim();
+    if (!token) return alert("ADMIN_TOKEN wajib diisi.");
+
+    $("status").textContent = "Loading...";
+    const q = $("q").value.trim();
+    const published = $("published").value;
+
+    const data = await api(`/api/admin/games-list?q=${encodeURIComponent(q)}&published=${encodeURIComponent(published)}&page=${state.page}&limit=${state.limit}`, { token });
+
+    state.total = data.total;
+    state.items = data.items || [];
+
+    const pages = Math.max(1, Math.ceil(state.total / state.limit));
+    $("page").textContent = String(state.page);
+    $("pages").textContent = String(pages);
+    $("prev").disabled = state.page <= 1;
+    $("next").disabled = state.page >= pages;
+
+    $("status").textContent = `OK • total ${state.total}`;
+    render();
+  }
+
+  function findItem(slug){ return state.items.find(x => x.slug === slug); }
+
+  // actions on table
+  $("tbody").addEventListener("click", async (e) => {
+    const btn = e.target.closest("button");
+    if (!btn) return;
+
+    const act = btn.getAttribute("data-act");
+    const slug = btn.getAttribute("data-slug");
+    const token = $("token").value.trim();
+
+    try {
+      if (act === "edit") {
+        const it = findItem(slug);
+        if (!it) return;
+
+        $("dlgStatus").textContent = "";
+        $("e_slug").value = it.slug || "";
+        $("e_title").value = it.title || "";
+        $("e_genre").value = it.genre || "";
+        $("e_platform").value = it.platform || "";
+        $("e_cover").value = it.cover_url || "";
+        $("e_desc").value = it.short_desc || "";
+        $("e_pub").value = String(Number(it.is_published) === 1 ? 1 : 0);
+        $("delFile").checked = false;
+
+        $("dlg").showModal();
+      }
+
+      if (act === "toggle") {
+        const it = findItem(slug);
+        if (!it) return;
+        const nextPub = Number(it.is_published) === 1 ? 0 : 1;
+
+        await api("/api/admin/game-update", {
+          method: "POST",
+          token,
+          body: { slug, is_published: nextPub }
+        });
+
+        await load();
+      }
+    } catch (err) {
+      alert(err.message);
+    }
+  });
+
+  $("btnLoad").addEventListener("click", async () => {
+    state.page = 1;
+    try { await load(); } catch (e) { $("status").textContent = "ERROR: " + e.message; }
+  });
+
+  $("prev").addEventListener("click", async () => { state.page--; await load().catch(()=>{}); });
+  $("next").addEventListener("click", async () => { state.page++; await load().catch(()=>{}); });
+
+  $("btnSave").addEventListener("click", async () => {
+    const token = $("token").value.trim();
+    const slug = $("e_slug").value.trim();
+
+    try {
+      $("dlgStatus").textContent = "Saving...";
+      await api("/api/admin/game-update", {
+        method: "POST",
+        token,
+        body: {
+          slug,
+          title: $("e_title").value.trim(),
+          genre: $("e_genre").value.trim() || null,
+          platform: $("e_platform").value.trim() || null,
+          cover_url: $("e_cover").value.trim() || null,
+          short_desc: $("e_desc").value.trim() || null,
+          is_published: $("e_pub").value
+        }
+      });
+      $("dlgStatus").textContent = "Saved ✅";
+      await load();
+    } catch (e) {
+      $("dlgStatus").textContent = "ERROR: " + e.message;
+      alert(e.message);
+    }
+  });
+
+  $("btnDelete").addEventListener("click", async () => {
+    const token = $("token").value.trim();
+    const slug = $("e_slug").value.trim();
+    const del = $("delFile").checked;
+
+    if (!confirm(`Hapus game "${slug}"?` + (del ? " (D1 + R2)" : " (D1 saja)"))) return;
+
+    try {
+      $("dlgStatus").textContent = "Deleting...";
+      await api("/api/admin/game-delete", {
+        method: "POST",
+        token,
+        body: { slug, deleteFile: del }
+      });
+      $("dlg").close();
+      await load();
+    } catch (e) {
+      $("dlgStatus").textContent = "ERROR: " + e.message;
+      alert(e.message);
+    }
+  });
+</script>
+</body>
+</html>
