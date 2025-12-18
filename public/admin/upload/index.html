@@ -359,50 +359,71 @@
   });
 
   $("btnUpload").addEventListener("click", async () => {
-    const token = $("token").value.trim();
-    const file = $("file").files[0];
+  const token = $("token").value.trim();
+  const file = $("file").files[0];
 
-    const slug = $("slug").value.trim();
-    const key = $("key").value.trim();
+  const slug = $("slug").value.trim();
+  const key = $("key").value.trim();
 
-    if (!token) return alert("ADMIN_TOKEN wajib diisi.");
-    if (!file) return alert("Pilih file game dulu.");
-    if (!slug || !key) return alert("Slug/key belum valid.");
+  if (!token) return alert("ADMIN_TOKEN wajib diisi.");
+  if (!file) return alert("Pilih file game dulu.");
+  if (!slug || !key) return alert("Slug/key belum valid.");
 
-    $("btnUpload").disabled = true;
-    $("btnAbort").disabled = false;
-    $("status").textContent = "Starting...";
+  $("btnUpload").disabled = true;
+  $("btnAbort").disabled = false;
+  $("status").textContent = "Starting...";
 
-    try {
-      // cover (optional)
-      $("status").textContent = "Uploading cover...";
-      const coverUrl = await uploadCoverIfAny(token, slug);
+  try {
+    // 1) create MPU
+    $("status").textContent = "Creating multipart upload...";
+    const created = await apiJson("/api/admin/mpu-create", {
+      method: "POST",
+      token,
+      body: { key, contentType: "application/octet-stream" },
+    });
 
-      // 1) create MPU
-      $("status").textContent = "Creating multipart upload...";
-      const created = await apiJson("/api/admin/mpu-create", {
-        method: "POST",
-        token,
-        body: { key, contentType: "application/octet-stream" },
-      });
+    current.key = created.key;
+    current.uploadId = created.uploadId;
 
-      current.key = created.key;
-      current.uploadId = created.uploadId;
+    // 2) upload parts
+    const parts = await uploadSequential(file, token, created.key, created.uploadId);
 
-      // 2) upload parts
-      const parts = await uploadSequential(file, token, created.key, created.uploadId);
+    // 3) complete
+    $("status").textContent = "Completing upload...";
+    await apiJson("/api/admin/mpu-complete", {
+      method: "POST",
+      token,
+      body: { key: created.key, uploadId: created.uploadId, parts },
+    });
 
-      // 3) complete
-      $("status").textContent = "Completing upload...";
-      await apiJson("/api/admin/mpu-complete", {
-        method: "POST",
-        token,
-        body: { key: created.key, uploadId: created.uploadId, parts },
-      });
+    // 4) upsert dulu TANPA cover (biar game “exist”)
+    $("status").textContent = "Saving metadata (initial)...";
+    await apiJson("/api/admin/game-upsert", {
+      method: "POST",
+      token,
+      body: {
+        title: $("title").value.trim() || slug,
+        slug,
+        genre: $("genre").value || null,
+        platform: $("platform").value.trim() || null,
+        cover_url: null,
+        short_desc: $("short_desc").value.trim() || null,
+        is_published: $("is_published").value === "1",
+        file_key: created.key,
+        file_name: file.name,
+        file_size_bytes: file.size,
+        sha256: null,
+      },
+    });
 
-      // 4) upsert D1
-      $("status").textContent = "Saving metadata...";
-      const up = await apiJson("/api/admin/game-upsert", {
+    // 5) baru upload cover (sekarang record game sudah ada)
+    $("status").textContent = "Uploading cover...";
+    const coverUrl = await uploadCoverIfAny(token, slug);
+
+    // 6) update metadata lagi dengan cover_url (kalau ada)
+    if (coverUrl) {
+      $("status").textContent = "Saving cover url...";
+      await apiJson("/api/admin/game-upsert", {
         method: "POST",
         token,
         body: {
@@ -410,7 +431,7 @@
           slug,
           genre: $("genre").value || null,
           platform: $("platform").value.trim() || null,
-          cover_url: coverUrl || null,
+          cover_url: coverUrl,
           short_desc: $("short_desc").value.trim() || null,
           is_published: $("is_published").value === "1",
           file_key: created.key,
@@ -419,17 +440,18 @@
           sha256: null,
         },
       });
-
-      $("status").textContent = "DONE ✅ (cek Manage)";
-      // bonus: biar enak, langsung lempar ke manage kalau mau:
-      // location.href = "/admin/manage";
-    } catch (e) {
-      $("status").textContent = "ERROR ❌";
-      alert(e.message);
-    } finally {
-      $("btnUpload").disabled = false;
     }
-  });
+
+    $("status").textContent = "DONE ✅ (cek Manage)";
+  } catch (e) {
+    $("status").textContent = "ERROR ❌";
+    alert(e.message);
+  } finally {
+    $("btnUpload").disabled = false;
+  }
+});
+
 </script>
 </body>
 </html>
+
