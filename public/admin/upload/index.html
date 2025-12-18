@@ -40,7 +40,6 @@
     .addRow input{flex:1}
     .addRow select{flex:1}
 
-    /* chips genre terpilih */
     .picked{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
     .chip{
       display:inline-flex;align-items:center;gap:8px;
@@ -280,8 +279,6 @@
   function getGenresForSave(){
     const arr = (selectedGenres || []).map(x => String(x || "").trim()).filter(Boolean);
     if (arr.length) return arr;
-
-    // fallback kalau user belum klik "+ Genre"
     const one = String($("genre").value || "").trim();
     return one ? [one] : [];
   }
@@ -322,7 +319,6 @@
     const f = $("file").files[0];
     if (!f) return;
 
-    // ganti file -> reset chip genre supaya tidak kebawa
     selectedGenres = [];
     renderPickedGenres();
 
@@ -366,6 +362,43 @@
     return data;
   }
 
+  function makeCoverUrlFromKey(key){
+    // jika backend kamu pakai /api/cover/<key>, ganti baris ini:
+    return `/api/cover?key=${encodeURIComponent(key)}`;
+  }
+
+  function normalizeCoverResponse(data){
+    // terima banyak kemungkinan nama field
+    const url =
+      data?.cover_url ||
+      data?.coverUrl ||
+      data?.url ||
+      data?.cover ||
+      null;
+
+    const key =
+      data?.key ||
+      data?.cover_key ||
+      data?.coverKey ||
+      data?.r2_key ||
+      data?.object_key ||
+      null;
+
+    // kalau "url" isinya cuma key/path (mis: covers/x.webp), ubah jadi endpoint cover
+    const looksLikeKey = (v) => v && !String(v).startsWith("http") && !String(v).startsWith("/") && String(v).includes("/");
+    const looksLikeRelativeKey = (v) => v && !String(v).startsWith("http") && String(v).includes("/");
+
+    if (url && looksLikeKey(url)) return { cover_url: makeCoverUrlFromKey(url), raw: data };
+    if (url && looksLikeRelativeKey(url) && !String(url).startsWith("/api/")) {
+      // contoh: "covers/abc.webp" -> /api/cover?key=covers/abc.webp
+      return { cover_url: makeCoverUrlFromKey(url), raw: data };
+    }
+
+    if (url) return { cover_url: String(url), raw: data };
+    if (key) return { cover_url: makeCoverUrlFromKey(key), raw: data };
+    return { cover_url: null, raw: data };
+  }
+
   // cover upload: field HARUS "cover"
   async function uploadCoverIfAny(token, slug) {
     const f = $("cover").files?.[0];
@@ -386,7 +419,13 @@
     try { data = text ? JSON.parse(text) : null; } catch {}
     if (!res.ok) throw new Error(`${res.status} ${(data && data.error) ? data.error : (text || res.statusText)}`);
 
-    return data.coverUrl; // /api/cover?key=...
+    const norm = normalizeCoverResponse(data || {});
+    if (!norm.cover_url){
+      // biar gak “sukses tapi kosong”
+      throw new Error(`Cover upload sukses tapi tidak mengembalikan cover_url/key. Response: ${text.slice(0,200)}`);
+    }
+
+    return norm.cover_url;
   }
 
   async function uploadSequential(file, token, key, uploadId) {
@@ -453,11 +492,8 @@
   });
 
   function resetFormAfterSuccess() {
-    // kosongkan file & cover
     $("file").value = "";
     $("cover").value = "";
-
-    // kosongkan field teks
     $("slug").value = "";
     $("key").value = "";
     $("title").value = "";
@@ -465,27 +501,22 @@
     $("short_desc").value = "";
     $("genreNew").value = "";
 
-    // reset select
     renderGenres();
     $("genre").selectedIndex = 0;
     $("is_published").value = "1";
 
-    // reset multi-genre chip
     selectedGenres = [];
     renderPickedGenres();
 
-    // reset preview cover
     $("coverPreview").src = "";
     $("coverInfo").textContent = "Belum ada cover dipilih.";
 
-    // reset progress UI
     barFill.style.width = "0%";
     $("bytes").textContent = bytesFmt(0);
     $("total").textContent = bytesFmt(0);
     $("speed").textContent = "0 MB/s";
     $("speedAvg").textContent = "0 MB/s";
 
-    // reset status & abort state
     $("status").textContent = "Siap upload.";
     $("btnAbort").disabled = true;
     current = { key: null, uploadId: null };
@@ -534,11 +565,10 @@
         body: { key: created.key, uploadId: created.uploadId, parts },
       });
 
-      // genre multi -> simpan sebagai string (tanpa ubah backend)
       const genresArr = getGenresForSave();
       const genreToSave = genresArr.length ? genresArr.join(", ") : null;
 
-      // 4) upsert dulu TANPA cover_url (biar game “exist”)
+      // 4) upsert awal (boleh null cover)
       $("status").textContent = "Saving metadata (initial)...";
       await apiJson("/api/admin/game-upsert", {
         method: "POST",
@@ -558,11 +588,15 @@
         },
       });
 
-      // 5) baru upload cover (record sudah ada)
+      // 5) upload cover (FIX)
       $("status").textContent = "Uploading cover...";
       const coverUrl = await uploadCoverIfAny(token, slug);
 
-      // 6) update metadata lagi dengan cover_url
+      // optional: update preview biar yakin gak “kosong”
+      $("coverPreview").src = coverUrl;
+      $("coverInfo").textContent = `Uploaded ✅ (${coverUrl})`;
+
+      // 6) update metadata lagi dengan cover_url (PASTI string)
       $("status").textContent = "Saving cover url...";
       await apiJson("/api/admin/game-upsert", {
         method: "POST",
@@ -572,7 +606,7 @@
           slug,
           genre: genreToSave,
           platform: $("platform").value.trim() || null,
-          cover_url: coverUrl,
+          cover_url: String(coverUrl),
           short_desc: $("short_desc").value.trim() || null,
           is_published: $("is_published").value === "1",
           file_key: created.key,
@@ -582,7 +616,7 @@
         },
       });
 
-      $("status").textContent = "DONE ✅ (cek Manage)";
+      $("status").textContent = "DONE ✅ (cek Home/Manage)";
       resetFormAfterSuccess();
     } catch (e) {
       $("status").textContent = "ERROR ❌";
