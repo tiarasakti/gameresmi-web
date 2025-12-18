@@ -265,7 +265,7 @@
       background:rgba(10,16,36,.65);
     }
 
-    /* === MULTI GENRE CHIP EDITOR === */
+    /* === MULTI GENRE CHIP EDITOR + OK BUTTON === */
     .chipEditor{
       width:100%;
       padding:10px 10px;
@@ -319,6 +319,49 @@
       border-radius:10px;
     }
 
+    .okBtn{
+      flex:0;
+      padding:8px 12px;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,.14);
+      background:linear-gradient(135deg, rgba(74,163,255,1), rgba(124,92,255,1));
+      color:#071019;
+      font-weight:900;
+      cursor:pointer;
+      user-select:none;
+    }
+    .okBtn:hover{filter:brightness(1.05)}
+    .okBtn:active{transform:translateY(1px)}
+
+    /* === QUICK PICK (seperti upload) === */
+    .pickWrap{
+      margin-top:10px;
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      align-items:center;
+    }
+    .pickBtn{
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.06);
+      color:rgba(233,238,255,.92);
+      font-weight:900;
+      font-size:12px;
+      padding:7px 10px;
+      border-radius:999px;
+      cursor:pointer;
+      user-select:none;
+      transition:filter .12s ease, transform .08s ease, background .12s ease, border-color .12s ease;
+      white-space:nowrap;
+    }
+    .pickBtn:hover{filter:brightness(1.07)}
+    .pickBtn:active{transform:translateY(1px)}
+    .pickBtn.active{
+      background:rgba(74,163,255,.18);
+      border-color:rgba(74,163,255,.40);
+      box-shadow:0 0 0 3px rgba(74,163,255,.10);
+    }
+
     @media (max-width: 820px){
       .grid3{grid-template-columns:1fr}
       .grid2{grid-template-columns:1fr}
@@ -332,7 +375,7 @@
       <div class="top">
         <div>
           <h1>Manage Games</h1>
-          <div class="subtitle">Edit metadata, publish/draft, ganti cover, hapus game — sekarang genre bisa lebih dari 1.</div>
+          <div class="subtitle">Edit metadata, publish/draft, ganti cover, hapus game — genre multi + quick pick.</div>
         </div>
         <div class="rightLinks">
           <a class="btn btnSm ghost" href="/admin/upload/">Upload</a>
@@ -419,7 +462,6 @@
           </div>
         </div>
 
-        <!-- Datalist (saran) -->
         <datalist id="genreOptions"></datalist>
         <datalist id="platformOptions"></datalist>
 
@@ -429,11 +471,13 @@
 
             <div class="chipEditor" id="genreEditor" aria-label="Genre multi">
               <div class="chipList" id="genreChips"></div>
-              <input id="mGenreInput" list="genreOptions" placeholder="Ketik genre, Enter / koma…" />
+              <input id="mGenreInput" list="genreOptions" placeholder="Ketik genre…" />
+              <button class="okBtn" id="mGenreOk" type="button" title="Tambah genre dari input">OK</button>
               <input id="mGenre" type="hidden" />
             </div>
 
-            <div class="hint">Contoh: <span class="mono">Action, RPG, Adventure</span>. Klik × untuk hapus.</div>
+            <div class="hint">Enter/koma juga bisa. Klik chip di bawah untuk toggle (seperti upload).</div>
+            <div class="pickWrap" id="genrePick" aria-label="Pilihan genre cepat"></div>
           </div>
 
           <div>
@@ -487,6 +531,7 @@
 
   // === MULTI GENRE STATE ===
   let genreState = [];
+  let genreCatalog = []; // quick pick list
 
   function esc(s){
     return String(s ?? "").replace(/[&<>"']/g, m => ({
@@ -519,12 +564,11 @@
     genreState = uniqCI(list || []);
     $("mGenre").value = genreState.length ? genreState.join(", ") : "";
     renderGenreChips();
+    renderGenrePick(); // keep active state in sync
   }
 
   function renderGenreChips(){
     const wrap = $("genreChips");
-    if (!wrap) return;
-
     wrap.innerHTML = genreState.map(g => `
       <span class="chipPill">
         ${esc(g)}
@@ -546,6 +590,36 @@
     if (!parts.length) return;
     setGenres([...genreState, ...parts]);
     $("mGenreInput").value = "";
+  }
+
+  function renderGenrePick(){
+    const el = $("genrePick");
+    if (!el) return;
+
+    if (!genreCatalog.length){
+      el.innerHTML = `<span class="hint" style="margin:0">Load data dulu untuk muncul pilihan genre.</span>`;
+      return;
+    }
+
+    const activeSet = new Set(genreState.map(x => x.toLowerCase()));
+    el.innerHTML = genreCatalog.map(g => {
+      const on = activeSet.has(g.toLowerCase());
+      return `<button type="button" class="pickBtn ${on ? "active" : ""}" data-pick="${esc(g)}">${esc(g)}</button>`;
+    }).join("");
+
+    el.querySelectorAll("[data-pick]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const g = btn.getAttribute("data-pick") || "";
+        const k = g.toLowerCase();
+        const active = new Set(genreState.map(x => x.toLowerCase()));
+        if (active.has(k)){
+          setGenres(genreState.filter(x => x.toLowerCase() !== k));
+        } else {
+          setGenres([...genreState, g]);
+        }
+        $("mGenreInput").focus();
+      });
+    });
   }
 
   function fmtBytes(n){
@@ -621,18 +695,37 @@
     }
   }
 
-  function buildDatalist(){
-    // ✅ FIX: ambil genre per item (split koma) biar saran tidak jadi string panjang
-    const genres = [...new Set(
-      currentItems.flatMap(x => splitMulti(x.genre))
-    )].sort((a,b) => a.localeCompare(b, "id", { sensitivity:"base" }));
+  function buildDatalistAndPick(){
+    // genre unique (split multi)
+    const all = currentItems.flatMap(x => splitMulti(x.genre));
+    const uniq = [...new Set(all.map(x => x.trim()).filter(Boolean))];
 
-    const plats  = [...new Set(
-      currentItems.map(x => (x.platform||"").trim()).filter(Boolean)
-    )].sort((a,b) => a.localeCompare(b, "id", { sensitivity:"base" }));
+    // quick pick by frequency (kayak upload: yang sering muncul)
+    const freq = new Map();
+    for (const g of all){
+      const s = String(g||"").trim();
+      if (!s) continue;
+      const k = s.toLowerCase();
+      freq.set(k, (freq.get(k) || 0) + 1);
+    }
 
-    $("genreOptions").innerHTML = genres.map(g => `<option value="${esc(g)}"></option>`).join("");
+    const catalog = uniq
+      .sort((a,b) => (freq.get(b.toLowerCase())||0) - (freq.get(a.toLowerCase())||0) || a.localeCompare(b, "id", { sensitivity:"base" }))
+      .slice(0, 24); // jumlah chip pilihan
+
+    genreCatalog = catalog;
+
+    // datalist
+    $("genreOptions").innerHTML = uniq
+      .sort((a,b) => a.localeCompare(b, "id", { sensitivity:"base" }))
+      .map(g => `<option value="${esc(g)}"></option>`).join("");
+
+    const plats  = [...new Set(currentItems.map(x => (x.platform||"").trim()).filter(Boolean))]
+      .sort((a,b) => a.localeCompare(b, "id", { sensitivity:"base" }));
+
     $("platformOptions").innerHTML = plats.map(p => `<option value="${esc(p)}"></option>`).join("");
+
+    renderGenrePick();
   }
 
   function openLightbox(src){
@@ -726,7 +819,7 @@
       const data = await apiJson(`/api/admin/games?${qs.toString()}`, { token });
 
       currentItems = Array.isArray(data.items) ? data.items : [];
-      buildDatalist();
+      buildDatalistAndPick();
       render(currentItems);
 
       const total = data.total ?? 0;
@@ -747,8 +840,6 @@
 
     $("mSlug").textContent = editing.slug;
     $("mTitle").value = editing.title || "";
-
-    // ✅ multi-genre: parse -> chip state
     setGenres(splitMulti(editing.genre));
 
     $("mPlatform").value = (editing.platform || "").trim();
@@ -769,8 +860,6 @@
     document.body.classList.add("modal-open");
     $("modal").style.display = "flex";
     $("modal").setAttribute("aria-hidden", "false");
-
-    // fokus ke input genre biar enak nambah
     setTimeout(() => $("mGenreInput").focus(), 0);
   }
 
@@ -791,8 +880,10 @@
     }
   });
 
-  // === CHIP EDITOR EVENTS ===
+  // CHIP EDITOR EVENTS
   $("genreEditor").addEventListener("click", () => $("mGenreInput").focus());
+
+  $("mGenreOk").addEventListener("click", () => addGenresFromText($("mGenreInput").value));
 
   $("mGenreInput").addEventListener("keydown", (e) => {
     if (e.key === "Enter" || e.key === ","){
@@ -800,22 +891,14 @@
       addGenresFromText($("mGenreInput").value);
       return;
     }
-    // backspace di input kosong -> hapus chip terakhir
     if (e.key === "Backspace" && !$("mGenreInput").value && genreState.length){
       setGenres(genreState.slice(0, -1));
     }
   });
 
   $("mGenreInput").addEventListener("blur", () => {
+    // jangan maksa auto-add kalau user memang kosong
     addGenresFromText($("mGenreInput").value);
-  });
-
-  $("mGenreInput").addEventListener("paste", () => {
-    // kalau paste berisi koma, akan diproses saat event loop berikutnya
-    setTimeout(() => {
-      const v = $("mGenreInput").value || "";
-      if (v.includes(",")) addGenresFromText(v);
-    }, 0);
   });
 
   $("mCover").addEventListener("change", () => {
@@ -846,13 +929,10 @@
 
       $("mStatus").textContent = "Update metadata…";
 
-      // ✅ genre final sebagai string "A, B, C"
-      const genreStr = ($("mGenre").value || "").trim();
-
       const payload = {
         slug: editing.slug,
         title: $("mTitle").value.trim() || editing.slug,
-        genre: genreStr || null,
+        genre: ($("mGenre").value || "").trim() || null,
         platform: $("mPlatform").value.trim() || null,
         short_desc: $("mDesc").value.trim() || null,
         cover_url,
@@ -865,7 +945,7 @@
       const idx = currentItems.findIndex(x => x.slug === editing.slug);
       if (idx >= 0 && updated && updated.slug) currentItems[idx] = updated;
 
-      buildDatalist();
+      buildDatalistAndPick();
       render(currentItems);
 
       const tr = document.querySelector(`tr[data-row="${CSS.escape(editing.slug)}"]`);
@@ -899,7 +979,7 @@
       });
 
       currentItems = currentItems.filter(x => x.slug !== editing.slug);
-      buildDatalist();
+      buildDatalistAndPick();
       render(currentItems);
       toast("Deleted 🗑️");
       closeModal();
