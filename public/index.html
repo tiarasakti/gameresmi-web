@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>TSGames: List & Download Game Terlengkap</title>
   <meta name="description" content="Katalog game di gameresmi.pw. Cari judul, pilih genre, dan unduh game." />
 
@@ -49,12 +49,25 @@
 
     a{ color: inherit; text-decoration:none }
     a:hover{ text-decoration:underline }
+    button{ font:inherit; }
 
-    .container{ max-width: var(--max); margin: 0 auto; padding: 0 16px; }
+    /* padding biar nggak mepet + aman notch */
+    .container{
+      max-width: var(--max);
+      margin: 0 auto;
+      padding-left: max(16px, env(safe-area-inset-left));
+      padding-right: max(16px, env(safe-area-inset-right));
+    }
 
-    /* utilities */
-    .desktopOnly{ display:block; }
-    .mobileOnly{ display:none; }
+    /* utilities (mobile-first, lebih kebal) */
+    .desktopOnly{ display:none; }
+    .mobileOnly{ display:block; }
+
+    /* desktop */
+    @media (min-width: 741px){
+      .desktopOnly{ display:block; }
+      .mobileOnly{ display:none; }
+    }
 
     /* Top bar */
     .topbar{
@@ -66,6 +79,7 @@
       color: rgba(255,255,255,.85);
       font-size: 12px;
       backdrop-filter: blur(10px);
+      padding-top: env(safe-area-inset-top);
     }
     .topbar .inner{
       display:flex;
@@ -78,19 +92,44 @@
     .toplinks a{ opacity:.9 }
     .toplinks a:hover{ opacity:1 }
 
+    /* Login: tombol 3D */
     .login{
-      color: #7dd3fc;
-      font-weight: 900;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding: 10px 14px;
+      border-radius: 14px;
+      font-weight: 1000;
       letter-spacing: .2px;
-      white-space:nowrap;
+      white-space: nowrap;
+
+      color:#071019;
+      background: linear-gradient(180deg,#bfe9ff,#7dd3fc 40%,#38bdf8 70%,#0ea5e9);
+      border: 1px solid rgba(255,255,255,.38);
+      box-shadow:
+        0 12px 26px rgba(0,0,0,.35),
+        inset 0 1px 0 rgba(255,255,255,.65),
+        inset 0 -4px 0 rgba(2,132,199,.70);
+      text-decoration:none !important;
+      transform: translateY(0);
+      transition: transform .12s ease, filter .12s ease, box-shadow .12s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .login:hover{ filter: brightness(1.03); transform: translateY(-1px); }
+    .login:active{
+      transform: translateY(1px);
+      box-shadow:
+        0 7px 18px rgba(0,0,0,.35),
+        inset 0 1px 0 rgba(255,255,255,.55),
+        inset 0 -1px 0 rgba(2,132,199,.70);
     }
 
     /* Hamburger button */
     .menuBtn{
-      width: 40px;
-      height: 40px;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,.14);
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.16);
       background: rgba(255,255,255,.06);
       color: rgba(255,255,255,.92);
       display:inline-flex;
@@ -98,9 +137,13 @@
       justify-content:center;
       cursor:pointer;
       user-select:none;
+      -webkit-tap-highlight-color: transparent;
     }
-    .menuBtn:hover{ filter: brightness(1.05); }
+    .menuBtn:hover{ filter: brightness(1.06); }
+
+    /* FIX UTAMA: span inline -> width/height gak jalan, jadi bar-nya 0px */
     .menuIcon{
+      display:inline-block;      /* <<< ini yang bikin 3 garis muncul */
       width: 18px;
       height: 14px;
       position: relative;
@@ -110,7 +153,7 @@
       left:0; right:0;
       height: 2px;
       border-radius: 999px;
-      background: rgba(255,255,255,.92);
+      background: rgba(255,255,255,.95);
       display:block;
     }
     .menuIcon span:nth-child(1){ top:0; }
@@ -131,7 +174,7 @@
       position: fixed;
       left: 12px;
       right: 12px;
-      top: 64px;
+      top: calc(56px + env(safe-area-inset-top));
       z-index: 90;
       border-radius: 16px;
       background: rgba(16,19,22,.92);
@@ -143,15 +186,8 @@
       transition: transform .18s ease, opacity .18s ease;
       overflow:hidden;
     }
-    body.menuOpen .overlay{
-      opacity: 1;
-      pointer-events: auto;
-    }
-    body.menuOpen .mobileMenu{
-      opacity: 1;
-      transform: translateY(0);
-      pointer-events: auto;
-    }
+    body.menuOpen .overlay{ opacity: 1; pointer-events: auto; }
+    body.menuOpen .mobileMenu{ opacity: 1; transform: translateY(0); pointer-events: auto; }
     body.menuOpen{ overflow:hidden; }
 
     .mHead{
@@ -171,13 +207,14 @@
       color: rgba(255,255,255,.92);
     }
     .closeBtn{
-      width: 40px; height: 40px;
-      border-radius: 12px;
-      border: 1px solid rgba(255,255,255,.14);
+      width: 42px; height: 42px;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.16);
       background: rgba(255,255,255,.06);
       color: rgba(255,255,255,.92);
       cursor:pointer;
       font-weight: 1000;
+      -webkit-tap-highlight-color: transparent;
     }
 
     .mBody{ padding: 10px 12px 12px; }
@@ -241,13 +278,8 @@
       border: 1px solid rgba(255,255,255,.14);
     }
 
-    .brand{
-      display:flex;
-      align-items:center;
-      text-decoration:none;
-    }
+    .brand{ display:flex; align-items:center; text-decoration:none; }
 
-    /* Logo size dibuat responsif (tidak tabrakan media query) */
     .brandLogo{
       height: clamp(110px, 28vw, 170px);
       width:auto;
@@ -330,10 +362,7 @@
     }
 
     /* Featured */
-    .featured{
-      margin: 18px 0 18px;
-      background: transparent;
-    }
+    .featured{ margin: 18px 0 18px; background: transparent; }
     .featuredFrame{
       border: 3px solid rgba(14,165,233,.55);
       border-radius: 10px;
@@ -397,10 +426,7 @@
       display:block;
       background:#111827;
     }
-    .featCard .cap{
-      padding: 10px 10px 12px;
-      color: rgba(255,255,255,.92);
-    }
+    .featCard .cap{ padding: 10px 10px 12px; color: rgba(255,255,255,.92); }
     .featCard .cap strong{
       display:block;
       font-size: 13px;
@@ -568,10 +594,7 @@
     }
 
     /* Sidebar */
-    .sidebar{
-      position: sticky;
-      top: 82px;
-    }
+    .sidebar{ position: sticky; top: 82px; }
     @media (max-width: 980px){
       .sidebar{ position: static; }
     }
@@ -662,13 +685,9 @@
     .footer strong{ color: rgba(255,255,255,.92); }
     .footer a{ color: #7dd3fc; }
 
-    /* Mobile tweaks + hamburger enable */
+    /* Mobile tweaks */
     @media (max-width: 740px){
-      .desktopOnly{ display:none; }
-      .mobileOnly{ display:block; }
-
       .topbar .inner{ padding: 10px 0; }
-
       .tagline{ font-size: 15px; }
       .featCard{ flex-basis: 180px; }
       .postTitle{ font-size: 18px; }
@@ -883,12 +902,8 @@
     if (closeBtn) closeBtn.addEventListener("click", () => setOpen(false));
     if (overlay) overlay.addEventListener("click", () => setOpen(false));
 
-    // close on link click
-    if (menu) {
-      menu.querySelectorAll("a").forEach(a => a.addEventListener("click", () => setOpen(false)));
-    }
+    if (menu) menu.querySelectorAll("a").forEach(a => a.addEventListener("click", () => setOpen(false)));
 
-    // close on ESC
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape") setOpen(false);
     });
@@ -1135,7 +1150,6 @@
       `;
     }).join("");
 
-    // copy link
     els.posts.querySelectorAll("[data-copy]").forEach(b => {
       b.addEventListener("click", async () => {
         const path = b.getAttribute("data-copy") || "";
@@ -1157,7 +1171,6 @@
       ? `Showing ${start}–${end} of ${total} • Page ${page}/${totalPages}`
       : `Page ${page}`;
 
-    // pager buttons
     els.pagerRight.innerHTML = "";
     const mk = (label, disabled, onClick, cls="") => {
       const btn = document.createElement("button");
