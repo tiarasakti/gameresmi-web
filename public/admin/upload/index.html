@@ -38,6 +38,25 @@
     .small{font-size:12px;opacity:.85}
     .addRow{display:flex;gap:8px;margin-top:8px}
     .addRow input{flex:1}
+    .addRow select{flex:1}
+
+    /* chips genre terpilih */
+    .picked{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+    .chip{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:6px 10px;border-radius:999px;
+      background:rgba(74,163,255,.14);
+      border:1px solid rgba(74,163,255,.22);
+      font-size:12px;font-weight:800
+    }
+    .chip button{
+      width:22px;height:22px;border-radius:999px;
+      border:1px solid rgba(255,255,255,.18);
+      background:rgba(0,0,0,.22);
+      color:rgba(255,255,255,.9);
+      cursor:pointer;line-height:1;font-weight:900
+    }
+    .chip button:hover{filter:brightness(1.08)}
   </style>
 </head>
 <body>
@@ -78,8 +97,7 @@
         </div>
         <div>
           <label>Cover (upload dari PC)</label>
-          <input id="cover" name="cover" type="file" accept="image/*" required>
-
+          <input id="cover" name="cover" type="file" accept="image/*" required />
           <div class="preview">
             <img id="coverPreview" class="img" alt="cover preview" />
             <div class="small" id="coverInfo">Belum ada cover dipilih.</div>
@@ -89,17 +107,27 @@
 
       <div class="row3">
         <div>
-          <label>Genre</label>
-          <select id="genre"></select>
+          <label>Genre (bisa lebih dari 1)</label>
+
           <div class="addRow">
+            <select id="genre"></select>
+            <button id="btnPickGenre" class="btn ghost" type="button">+ Genre</button>
+          </div>
+
+          <div class="picked" id="genrePicked"></div>
+          <div class="small">Tip: pilih genre lalu klik <b>+ Genre</b>. Bisa hapus per chip.</div>
+
+          <div class="addRow" style="margin-top:10px">
             <input id="genreNew" placeholder="Tambah genre baru..." />
-            <button id="btnAddGenre" class="btn ghost" type="button">Tambah</button>
+            <button id="btnAddGenre" class="btn ghost" type="button">Simpan</button>
           </div>
         </div>
+
         <div>
           <label>Platform (opsional)</label>
           <input id="platform" placeholder="PC, PS2, Switch, ..." />
         </div>
+
         <div>
           <label>Publish?</label>
           <select id="is_published">
@@ -144,6 +172,11 @@
     if (!sec) return 0;
     return (bytes / 1024 / 1024) / sec;
   }
+  function escHtml(s){
+    return String(s ?? "").replace(/[&<>"']/g, m => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+    }[m]));
+  }
 
   function slugify(s) {
     return String(s || "")
@@ -168,6 +201,7 @@
       .map(w => w ? (w[0].toUpperCase() + w.slice(1)) : "")
       .join(" ");
   }
+
   function updateKey() {
     const slug = slugify($("slug").value);
     $("slug").value = slug;
@@ -186,7 +220,7 @@
     sessionStorage.setItem("ADMIN_TOKEN", $("token").value.trim());
   });
 
-  // genres
+  // genres list (localStorage)
   const DEFAULT_GENRES = ["Action","Adventure","RPG","Simulation","Strategy","Puzzle","Horror","Sports","Racing","Casual"];
   function loadGenres() {
     try {
@@ -199,18 +233,76 @@
   }
   function renderGenres(selected) {
     const arr = loadGenres();
-    $("genre").innerHTML = arr.map(g => `<option value="${g}">${g}</option>`).join("");
+    $("genre").innerHTML = arr.map(g => `<option value="${escHtml(g)}">${escHtml(g)}</option>`).join("");
     if (selected && arr.includes(selected)) $("genre").value = selected;
   }
   renderGenres();
 
+  // ===== Multi-genre state =====
+  let selectedGenres = [];
+
+  function renderPickedGenres(){
+    const box = $("genrePicked");
+    if (!box) return;
+
+    if (!selectedGenres.length){
+      box.innerHTML = `<span class="muted">Belum ada genre dipilih.</span>`;
+      return;
+    }
+
+    box.innerHTML = selectedGenres.map(g => {
+      const safeLabel = escHtml(g);
+      const safeKey = encodeURIComponent(g);
+      return `
+        <span class="chip">
+          ${safeLabel}
+          <button type="button" data-del="${safeKey}" aria-label="Hapus ${safeLabel}">×</button>
+        </span>
+      `;
+    }).join("");
+
+    box.querySelectorAll("[data-del]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const g = decodeURIComponent(btn.getAttribute("data-del") || "");
+        selectedGenres = selectedGenres.filter(x => x !== g);
+        renderPickedGenres();
+      });
+    });
+  }
+
+  function addGenreToSelected(g){
+    g = String(g || "").trim();
+    if (!g) return;
+    if (!selectedGenres.includes(g)) selectedGenres.push(g);
+    renderPickedGenres();
+  }
+
+  function getGenresForSave(){
+    const arr = (selectedGenres || []).map(x => String(x || "").trim()).filter(Boolean);
+    if (arr.length) return arr;
+
+    // fallback kalau user belum klik "+ Genre"
+    const one = String($("genre").value || "").trim();
+    return one ? [one] : [];
+  }
+
+  renderPickedGenres();
+
+  const btnPickGenre = $("btnPickGenre");
+  if (btnPickGenre){
+    btnPickGenre.addEventListener("click", () => addGenreToSelected($("genre").value));
+  }
+
   $("btnAddGenre").addEventListener("click", () => {
     const g = $("genreNew").value.trim();
     if (!g) return;
+
     const arr = loadGenres();
     if (!arr.includes(g)) arr.unshift(g);
     saveGenres(arr);
     renderGenres(g);
+
+    addGenreToSelected(g);
     $("genreNew").value = "";
   });
 
@@ -229,6 +321,10 @@
   $("file").addEventListener("change", () => {
     const f = $("file").files[0];
     if (!f) return;
+
+    // ganti file -> reset chip genre supaya tidak kebawa
+    selectedGenres = [];
+    renderPickedGenres();
 
     const { base, ext } = splitExt(f.name);
     const slug = slugify(base);
@@ -270,28 +366,28 @@
     return data;
   }
 
+  // cover upload: field HARUS "cover"
   async function uploadCoverIfAny(token, slug) {
-  const f = $("cover").files?.[0];
-  if (!f) return null;
+    const f = $("cover").files?.[0];
+    if (!f) return null;
 
-  const fd = new FormData();
-  fd.append("slug", slug);
-  fd.append("cover", f, f.name); // ✅ harus "cover", bukan "file"
+    const fd = new FormData();
+    fd.append("slug", slug);
+    fd.append("cover", f, f.name);
 
-  const res = await fetch("/api/admin/cover-upload", {
-    method: "POST",
-    headers: { Authorization: `Bearer ${token}` },
-    body: fd
-  });
+    const res = await fetch("/api/admin/cover-upload", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+      body: fd
+    });
 
-  const text = await res.text();
-  let data = null;
-  try { data = text ? JSON.parse(text) : null; } catch {}
-  if (!res.ok) throw new Error(`${res.status} ${(data && data.error) ? data.error : (text || res.statusText)}`);
+    const text = await res.text();
+    let data = null;
+    try { data = text ? JSON.parse(text) : null; } catch {}
+    if (!res.ok) throw new Error(`${res.status} ${(data && data.error) ? data.error : (text || res.statusText)}`);
 
-  return data.coverUrl; // /api/cover?key=...
-}
-
+    return data.coverUrl; // /api/cover?key=...
+  }
 
   async function uploadSequential(file, token, key, uploadId) {
     const totalParts = Math.ceil(file.size / CHUNK_SIZE);
@@ -321,11 +417,9 @@
       parts.push(part);
       uploaded += (end - start);
 
-      // progress
       $("bytes").textContent = bytesFmt(uploaded);
       barFill.style.width = Math.floor((uploaded / file.size) * 100) + "%";
 
-      // speed (per-part + avg)
       const now = performance.now();
       const inst = mbps((uploaded - lastUploaded), (now - lastT));
       const avg = mbps(uploaded, (now - t0));
@@ -359,107 +453,116 @@
   });
 
   function resetFormAfterSuccess() {
-  // kosongkan file & cover
-  $("file").value = "";
-  $("cover").value = "";
+    // kosongkan file & cover
+    $("file").value = "";
+    $("cover").value = "";
 
-  // kosongkan field teks
-  $("slug").value = "";
-  $("key").value = "";
-  $("title").value = "";
-  $("platform").value = "";
-  $("short_desc").value = "";
-  $("genreNew").value = "";
+    // kosongkan field teks
+    $("slug").value = "";
+    $("key").value = "";
+    $("title").value = "";
+    $("platform").value = "";
+    $("short_desc").value = "";
+    $("genreNew").value = "";
 
-  // reset select
-  renderGenres();                 // balik ke default list
-  $("genre").selectedIndex = 0;   // pilih pertama
-  $("is_published").value = "1";  // default Ya
+    // reset select
+    renderGenres();
+    $("genre").selectedIndex = 0;
+    $("is_published").value = "1";
 
-  // reset preview cover
-  $("coverPreview").src = "";
-  $("coverInfo").textContent = "Belum ada cover dipilih.";
+    // reset multi-genre chip
+    selectedGenres = [];
+    renderPickedGenres();
 
-  // reset progress UI
-  barFill.style.width = "0%";
-  $("bytes").textContent = bytesFmt(0);
-  $("total").textContent = bytesFmt(0);
-  $("speed").textContent = "0 MB/s";
-  $("speedAvg").textContent = "0 MB/s";
+    // reset preview cover
+    $("coverPreview").src = "";
+    $("coverInfo").textContent = "Belum ada cover dipilih.";
 
-  // reset status & abort state
-  $("status").textContent = "Siap upload.";
-  $("btnAbort").disabled = true;
-  current = { key: null, uploadId: null };
+    // reset progress UI
+    barFill.style.width = "0%";
+    $("bytes").textContent = bytesFmt(0);
+    $("total").textContent = bytesFmt(0);
+    $("speed").textContent = "0 MB/s";
+    $("speedAvg").textContent = "0 MB/s";
 
-  // scroll ke atas biar enak (opsional)
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
+    // reset status & abort state
+    $("status").textContent = "Siap upload.";
+    $("btnAbort").disabled = true;
+    current = { key: null, uploadId: null };
+
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
 
   $("btnUpload").addEventListener("click", async () => {
-  const token = $("token").value.trim();
-  const file = $("file").files[0];
+    const token = $("token").value.trim();
+    const file = $("file").files[0];
 
-  const slug = $("slug").value.trim();
-  const key = $("key").value.trim();
+    const slug = $("slug").value.trim();
+    const key = $("key").value.trim();
 
-  if (!token) return alert("ADMIN_TOKEN wajib diisi.");
-  if (!file) return alert("Pilih file game dulu.");
-  if (!slug || !key) return alert("Slug/key belum valid.");
+    const coverFile = $("cover").files?.[0];
 
-  $("btnUpload").disabled = true;
-  $("btnAbort").disabled = false;
-  $("status").textContent = "Starting...";
+    if (!token) return alert("ADMIN_TOKEN wajib diisi.");
+    if (!file) return alert("Pilih file game dulu.");
+    if (!slug || !key) return alert("Slug/key belum valid.");
+    if (!coverFile) return alert("Pilih cover dulu.");
 
-  try {
-    // 1) create MPU
-    $("status").textContent = "Creating multipart upload...";
-    const created = await apiJson("/api/admin/mpu-create", {
-      method: "POST",
-      token,
-      body: { key, contentType: "application/octet-stream" },
-    });
+    $("btnUpload").disabled = true;
+    $("btnAbort").disabled = false;
+    $("status").textContent = "Starting...";
 
-    current.key = created.key;
-    current.uploadId = created.uploadId;
+    try {
+      // 1) create MPU
+      $("status").textContent = "Creating multipart upload...";
+      const created = await apiJson("/api/admin/mpu-create", {
+        method: "POST",
+        token,
+        body: { key, contentType: "application/octet-stream" },
+      });
 
-    // 2) upload parts
-    const parts = await uploadSequential(file, token, created.key, created.uploadId);
+      current.key = created.key;
+      current.uploadId = created.uploadId;
 
-    // 3) complete
-    $("status").textContent = "Completing upload...";
-    await apiJson("/api/admin/mpu-complete", {
-      method: "POST",
-      token,
-      body: { key: created.key, uploadId: created.uploadId, parts },
-    });
+      // 2) upload parts
+      const parts = await uploadSequential(file, token, created.key, created.uploadId);
 
-    // 4) upsert dulu TANPA cover (biar game “exist”)
-    $("status").textContent = "Saving metadata (initial)...";
-    await apiJson("/api/admin/game-upsert", {
-      method: "POST",
-      token,
-      body: {
-        title: $("title").value.trim() || slug,
-        slug,
-        genre: $("genre").value || null,
-        platform: $("platform").value.trim() || null,
-        cover_url: null,
-        short_desc: $("short_desc").value.trim() || null,
-        is_published: $("is_published").value === "1",
-        file_key: created.key,
-        file_name: file.name,
-        file_size_bytes: file.size,
-        sha256: null,
-      },
-    });
+      // 3) complete
+      $("status").textContent = "Completing upload...";
+      await apiJson("/api/admin/mpu-complete", {
+        method: "POST",
+        token,
+        body: { key: created.key, uploadId: created.uploadId, parts },
+      });
 
-    // 5) baru upload cover (sekarang record game sudah ada)
-    $("status").textContent = "Uploading cover...";
-    const coverUrl = await uploadCoverIfAny(token, slug);
+      // genre multi -> simpan sebagai string (tanpa ubah backend)
+      const genresArr = getGenresForSave();
+      const genreToSave = genresArr.length ? genresArr.join(", ") : null;
 
-    // 6) update metadata lagi dengan cover_url (kalau ada)
-    if (coverUrl) {
+      // 4) upsert dulu TANPA cover_url (biar game “exist”)
+      $("status").textContent = "Saving metadata (initial)...";
+      await apiJson("/api/admin/game-upsert", {
+        method: "POST",
+        token,
+        body: {
+          title: $("title").value.trim() || slug,
+          slug,
+          genre: genreToSave,
+          platform: $("platform").value.trim() || null,
+          cover_url: null,
+          short_desc: $("short_desc").value.trim() || null,
+          is_published: $("is_published").value === "1",
+          file_key: created.key,
+          file_name: file.name,
+          file_size_bytes: file.size,
+          sha256: null,
+        },
+      });
+
+      // 5) baru upload cover (record sudah ada)
+      $("status").textContent = "Uploading cover...";
+      const coverUrl = await uploadCoverIfAny(token, slug);
+
+      // 6) update metadata lagi dengan cover_url
       $("status").textContent = "Saving cover url...";
       await apiJson("/api/admin/game-upsert", {
         method: "POST",
@@ -467,7 +570,7 @@
         body: {
           title: $("title").value.trim() || slug,
           slug,
-          genre: $("genre").value || null,
+          genre: genreToSave,
           platform: $("platform").value.trim() || null,
           cover_url: coverUrl,
           short_desc: $("short_desc").value.trim() || null,
@@ -478,18 +581,16 @@
           sha256: null,
         },
       });
+
+      $("status").textContent = "DONE ✅ (cek Manage)";
+      resetFormAfterSuccess();
+    } catch (e) {
+      $("status").textContent = "ERROR ❌";
+      alert(e.message);
+    } finally {
+      $("btnUpload").disabled = false;
     }
-
-    $("status").textContent = "DONE ✅ (cek Manage)";
-    resetFormAfterSuccess();
-  } catch (e) {
-    $("status").textContent = "ERROR ❌";
-    alert(e.message);
-  } finally {
-    $("btnUpload").disabled = false;
-  }
-});
-
+  });
 </script>
 </body>
 </html>
