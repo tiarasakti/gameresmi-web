@@ -5,32 +5,263 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Admin • Manage Games</title>
   <style>
-    :root { color-scheme: dark; }
-    body{font-family:system-ui;margin:0;background:#0b1020;color:#e9eeff}
-    .wrap{max-width:1100px;margin:34px auto;padding:0 16px}
-    .card{background:#121a33;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:18px}
-    .top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
-    h1{margin:0;font-size:18px}
-    .muted{opacity:.8;font-size:12px}
+    :root {
+      color-scheme: dark;
+      --bg0:#070a14;
+      --bg1:#0b1020;
+      --card:#101a35;
+      --card2:#0e1630;
+      --line:rgba(255,255,255,.10);
+      --line2:rgba(255,255,255,.14);
+      --text:#e9eeff;
+      --muted:rgba(233,238,255,.75);
+      --accent:#4aa3ff;
+      --accent2:#7c5cff;
+      --danger:#ff5b6e;
+      --ok:#22c55e;
+      --warn:#fbbf24;
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
+      --r:16px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 20% -10%, rgba(74,163,255,.18), transparent 55%),
+        radial-gradient(1000px 700px at 85% 10%, rgba(124,92,255,.18), transparent 55%),
+        radial-gradient(900px 600px at 50% 110%, rgba(34,197,94,.10), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+    }
+
+    .wrap{max-width:1180px;margin:34px auto;padding:0 16px}
+    .card{
+      background:linear-gradient(180deg, rgba(16,26,53,.98), rgba(14,22,48,.98));
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:22px;
+      padding:18px;
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    .card::before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: radial-gradient(600px 200px at 20% 0%, rgba(74,163,255,.20), transparent 60%),
+                  radial-gradient(700px 220px at 90% 0%, rgba(124,92,255,.18), transparent 62%);
+      pointer-events:none;
+      opacity:.9;
+    }
+    .card > *{position:relative}
+
+    .top{
+      display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap
+    }
+    h1{margin:0;font-size:20px;letter-spacing:.2px}
+    .subtitle{margin-top:4px;font-size:12px;color:var(--muted)}
+    .rightLinks{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
+    .row{
+      display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;margin-top:14px
+    }
+    .row > *{flex:1;min-width:200px}
+    .fieldLabel{font-size:12px;color:var(--muted);margin:0 0 6px 2px}
+
     input,textarea,button,select{font:inherit}
-    input,textarea,select{padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.15);background:#0e1630;color:#e9eeff;box-sizing:border-box}
-    .btn{display:inline-flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;border:0;background:#4aa3ff;color:#071022;cursor:pointer;font-weight:700}
-    .ghost{background:rgba(255,255,255,.08);color:#e9eeff;border:1px solid rgba(255,255,255,.12)}
-    .danger{background:#ff5b6e;color:#1a0b10}
-    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
-    .row > * { flex: 1; min-width: 180px; }
-    table{width:100%;border-collapse:collapse;margin-top:12px;font-size:13px}
-    th,td{padding:10px;border-bottom:1px solid rgba(255,255,255,.08);vertical-align:top}
-    th{opacity:.85;text-align:left;font-size:12px}
-    .pill{display:inline-block;padding:2px 8px;border-radius:999px;background:rgba(255,255,255,.08);font-size:12px}
-    .mono{font-family:ui-monospace,Menlo,Consolas,monospace}
-    .actions{display:flex;gap:8px;flex-wrap:wrap}
-    .modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;padding:16px}
-    .modal .box{max-width:720px;width:100%;background:#121a33;border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:16px}
-    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-    .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
-    .img{width:74px;height:74px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:#0e1630;object-fit:cover}
+    input,textarea,select{
+      width:100%;
+      padding:11px 12px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(10,16,36,.85);
+      color:var(--text);
+      outline:none;
+      transition: border-color .15s ease, transform .08s ease;
+    }
+    input:focus,textarea:focus,select:focus{border-color:rgba(74,163,255,.75)}
+    textarea{resize:vertical;min-height:92px}
+
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:10px;
+      padding:11px 14px;border-radius:12px;border:0;
+      background: linear-gradient(135deg, rgba(74,163,255,1), rgba(124,92,255,1));
+      color:#06101e; cursor:pointer; font-weight:800;
+      box-shadow: 0 10px 24px rgba(74,163,255,.18);
+      transition: transform .08s ease, filter .15s ease, opacity .15s ease;
+      user-select:none;
+    }
+    .btn:hover{filter:brightness(1.05)}
+    .btn:active{transform:translateY(1px)}
+    .btn:disabled{opacity:.55;cursor:not-allowed;filter:none}
+
+    .ghost{
+      background:rgba(255,255,255,.06);
+      color:var(--text);
+      border:1px solid rgba(255,255,255,.12);
+      box-shadow:none;
+    }
+    .danger{
+      background: linear-gradient(135deg, rgba(255,91,110,1), rgba(255,145,165,1));
+      color:#1b0910;
+      box-shadow: 0 10px 24px rgba(255,91,110,.18);
+    }
+
+    .metaBar{
+      margin-top:12px;
+      display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;
+      color:var(--muted);font-size:12px
+    }
+    .chips{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    .chip{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:6px 10px;border-radius:999px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      color:rgba(233,238,255,.88);
+      font-size:12px;
+    }
+    .dot{width:8px;height:8px;border-radius:999px;background:rgba(255,255,255,.25)}
+    .dot.ok{background:rgba(34,197,94,.85)}
+    .dot.bad{background:rgba(255,91,110,.90)}
+    .dot.warn{background:rgba(251,191,36,.90)}
+
+    .tableWrap{
+      margin-top:12px;
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:16px;
+      overflow:auto;
+      background:rgba(6,10,20,.35);
+    }
+    table{width:100%;border-collapse:collapse;font-size:13px;min-width:980px}
+    thead th{
+      position:sticky;top:0;z-index:2;
+      background:rgba(10,16,36,.92);
+      backdrop-filter: blur(10px);
+      border-bottom:1px solid rgba(255,255,255,.10);
+      text-align:left;
+      padding:12px 12px;
+      font-size:12px;
+      color:rgba(233,238,255,.80);
+      letter-spacing:.2px;
+    }
+    tbody td{
+      padding:12px;
+      border-bottom:1px solid rgba(255,255,255,.06);
+      vertical-align:top;
+    }
+    tbody tr:hover{background:rgba(255,255,255,.03)}
+
+    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace}
+    .badge{
+      display:inline-flex;align-items:center;gap:7px;
+      padding:4px 10px;border-radius:999px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      font-size:12px;
+      white-space:nowrap;
+    }
+    .badge.pub{border-color:rgba(34,197,94,.35)}
+    .badge.draft{border-color:rgba(251,191,36,.35)}
+
+    .coverSm{
+      width:44px;height:44px;border-radius:12px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(10,16,36,.70);
+      object-fit:cover;
+      display:block;
+    }
     a{color:#9ad1ff}
+    a:hover{filter:brightness(1.05)}
+
+    .actions{display:flex;gap:8px;flex-wrap:wrap}
+    .btnSm{padding:9px 12px;border-radius:12px;font-weight:800}
+    .btnSm.ghost{border:1px solid rgba(255,255,255,.14)}
+
+    /* Modal */
+    .modal{
+      position:fixed;inset:0;
+      background:rgba(0,0,0,.62);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      animation: fadeIn .16s ease both;
+    }
+    @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+    .box{
+      width:min(980px, 100%);
+      max-height: min(92vh, 980px);
+      background:linear-gradient(180deg, rgba(16,26,53,.98), rgba(14,22,48,.98));
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:22px;
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      transform: translateY(6px);
+      animation: popIn .18s ease both;
+      display:flex;
+      flex-direction:column;
+    }
+    @keyframes popIn{to{transform:translateY(0)}}
+
+    .boxHeader{
+      display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;
+      padding:14px 14px 10px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+      background:rgba(10,16,36,.55);
+      backdrop-filter: blur(10px);
+    }
+    .boxHeader .left{display:flex;flex-direction:column;gap:4px}
+    .boxBody{
+      padding:14px;
+      overflow:auto;  /* <<< ini yang bikin edit gak terpotong */
+    }
+    .boxFooter{
+      padding:12px 14px;
+      border-top:1px solid rgba(255,255,255,.08);
+      background:rgba(10,16,36,.55);
+      backdrop-filter: blur(10px);
+      display:flex;gap:10px;flex-wrap:wrap;align-items:center;
+    }
+
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+
+    .coverLg{
+      width:240px;height:150px;border-radius:16px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(10,16,36,.70);
+      object-fit:cover;
+      display:block;
+    }
+
+    .fileRow{
+      display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start;margin-top:12px
+    }
+    .fileRow > .grow{flex:1;min-width:240px}
+
+    .hint{font-size:12px;color:var(--muted);margin-top:6px}
+    .toast{
+      position:fixed;right:18px;bottom:18px;
+      background:rgba(10,16,36,.92);
+      border:1px solid rgba(255,255,255,.12);
+      color:rgba(233,238,255,.92);
+      border-radius:14px;
+      padding:10px 12px;
+      box-shadow: var(--shadow);
+      max-width:min(420px, calc(100vw - 36px));
+      display:none;
+      animation: popIn .18s ease both;
+      font-size:13px;
+    }
+
+    @media (max-width: 820px){
+      .grid3{grid-template-columns:1fr}
+      .grid2{grid-template-columns:1fr}
+      .coverLg{width:100%;height:180px}
+    }
   </style>
 </head>
 <body>
@@ -39,112 +270,134 @@
       <div class="top">
         <div>
           <h1>Manage Games</h1>
-          <div class="muted">Edit metadata, publish/draft, ganti cover, hapus game.</div>
+          <div class="subtitle">Edit metadata, publish/draft, ganti cover, hapus game — rapi, aman, dan nggak “kepotong” lagi.</div>
         </div>
-        <div class="row" style="margin:0;flex:initial">
-          <a class="btn ghost" href="/admin/upload/">Upload</a>
-          <a class="btn ghost" href="/">Home</a>
+        <div class="rightLinks">
+          <a class="btn btnSm ghost" href="/admin/upload/">Upload</a>
+          <a class="btn btnSm ghost" href="/">Home</a>
         </div>
       </div>
 
       <div class="row">
         <div>
-          <div class="muted">ADMIN_TOKEN (Bearer)</div>
+          <div class="fieldLabel">ADMIN_TOKEN (Bearer)</div>
           <input id="token" type="password" placeholder="Tempel token (session)" />
+          <div class="hint">Disimpan di sessionStorage. Tutup tab = hilang.</div>
         </div>
         <div>
-          <div class="muted">Cari (judul/slug)</div>
-          <input id="q" placeholder="mis: gta / mario / ats-ove..." />
+          <div class="fieldLabel">Cari (judul/slug/genre/platform)</div>
+          <input id="q" placeholder="mis: gta / mario / adventure / pc..." />
         </div>
         <div>
-          <div class="muted">Filter</div>
+          <div class="fieldLabel">Filter</div>
           <select id="published">
             <option value="">Semua</option>
             <option value="1">Published</option>
             <option value="0">Draft</option>
           </select>
         </div>
-        <div style="flex:0;min-width:140px">
+        <div style="flex:0;min-width:160px">
           <button id="btnLoad" class="btn" type="button">Load</button>
         </div>
       </div>
 
-      <div class="muted" id="meta"></div>
-
-      <table>
-        <thead>
-          <tr>
-            <th>Slug</th>
-            <th>Title</th>
-            <th>Genre / Platform</th>
-            <th>Status</th>
-            <th>File</th>
-            <th>Aksi</th>
-          </tr>
-        </thead>
-        <tbody id="tbody"></tbody>
-      </table>
-    </div>
-  </div>
-
-  <div class="modal" id="modal">
-    <div class="box">
-      <div class="top">
-        <div>
-          <div class="muted">Edit Game</div>
-          <div class="mono" id="mSlug"></div>
+      <div class="metaBar">
+        <div class="chips">
+          <span class="chip"><span id="dotApi" class="dot warn"></span> API</span>
+          <span class="chip"><span class="dot"></span> Endpoint: <span class="mono">/api/admin/games</span></span>
+          <span class="chip"><span class="dot"></span> Cover: <span class="mono">/api/cover/:id</span></span>
         </div>
-        <button class="btn ghost" id="mClose">Tutup</button>
+        <div id="meta" class="muted">Ready.</div>
       </div>
 
-      <div class="grid2" style="margin-top:12px">
-        <div>
-          <div class="muted">Title</div>
-          <input id="mTitle" />
-        </div>
-        <div>
-          <div class="muted">Publish?</div>
-          <select id="mPub">
-            <option value="1">Ya</option>
-            <option value="0">Tidak (draft)</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="grid3" style="margin-top:10px">
-        <div>
-          <div class="muted">Genre</div>
-          <input id="mGenre" placeholder="Action, RPG, ..." />
-        </div>
-        <div>
-          <div class="muted">Platform</div>
-          <input id="mPlatform" placeholder="PC, PS2, ..." />
-        </div>
-        <div>
-          <div class="muted">Cover (upload baru)</div>
-          <input id="mCover" type="file" accept="image/*" />
-        </div>
-      </div>
-
-      <div class="row" style="margin-top:10px">
-        <img id="mCoverPrev" class="img" alt="cover" />
-        <div style="flex:1">
-          <div class="muted">Short desc</div>
-          <textarea id="mDesc" style="width:100%;min-height:74px"></textarea>
-        </div>
-      </div>
-
-      <div class="row" style="margin-top:12px">
-        <button class="btn" id="mSave">Simpan</button>
-        <button class="btn danger" id="mDelete">Hapus</button>
-        <div class="muted" id="mStatus" style="flex:2"></div>
+      <div class="tableWrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="width:70px">Cover</th>
+              <th style="width:180px">Slug</th>
+              <th>Title</th>
+              <th style="width:190px">Genre / Platform</th>
+              <th style="width:140px">Status</th>
+              <th style="width:220px">File</th>
+              <th style="width:120px">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="tbody">
+            <tr><td colspan="7" class="muted">Belum load data.</td></tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
+
+  <!-- Modal -->
+  <div class="modal" id="modal" aria-hidden="true">
+    <div class="box" role="dialog" aria-modal="true" aria-labelledby="mTitleLabel">
+      <div class="boxHeader">
+        <div class="left">
+          <div class="muted" id="mTitleLabel">Edit Game</div>
+          <div class="mono" id="mSlug" style="font-size:13px;opacity:.92"></div>
+        </div>
+        <button class="btn btnSm ghost" id="mClose" type="button">Tutup</button>
+      </div>
+
+      <div class="boxBody">
+        <div class="grid2">
+          <div>
+            <div class="fieldLabel">Title</div>
+            <input id="mTitle" />
+          </div>
+          <div>
+            <div class="fieldLabel">Publish?</div>
+            <select id="mPub">
+              <option value="1">Ya</option>
+              <option value="0">Tidak (draft)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid3" style="margin-top:12px">
+          <div>
+            <div class="fieldLabel">Genre</div>
+            <input id="mGenre" placeholder="Action, RPG, ..." />
+          </div>
+          <div>
+            <div class="fieldLabel">Platform</div>
+            <input id="mPlatform" placeholder="PC, PS2, ..." />
+          </div>
+          <div>
+            <div class="fieldLabel">Cover (upload baru)</div>
+            <input id="mCover" type="file" accept="image/*" />
+            <div class="hint">Tips: JPG/PNG/WebP. Akan simpan ke R2 (covers/...).</div>
+          </div>
+        </div>
+
+        <div class="fileRow">
+          <img id="mCoverPrev" class="coverLg" alt="cover" />
+          <div class="grow">
+            <div class="fieldLabel">Short desc</div>
+            <textarea id="mDesc" placeholder="Deskripsi singkat..."></textarea>
+
+            <div class="hint" id="mInfo"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="boxFooter">
+        <button class="btn" id="mSave" type="button">Simpan</button>
+        <button class="btn danger" id="mDelete" type="button">Hapus</button>
+        <div class="muted" id="mStatus" style="flex:1;min-width:240px"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
 
 <script>
   const $ = (id) => document.getElementById(id);
 
+  // token session
   const savedToken = sessionStorage.getItem("ADMIN_TOKEN") || "";
   if (savedToken) $("token").value = savedToken;
   $("token").addEventListener("input", () => {
@@ -154,99 +407,140 @@
   let currentItems = [];
   let editing = null;
 
-async function apiJson(path, { method="GET", token, body } = {}) {
-  const headers = new Headers();
-  if (token) headers.set("Authorization", `Bearer ${token}`);
-  if (body) headers.set("content-type", "application/json; charset=utf-8");
-
-  const res = await fetch(path, { method, headers, body: body ? JSON.stringify(body) : undefined });
-
-  const ct = res.headers.get("content-type") || "";
-  const text = await res.text();
-
-  // Kalau bukan JSON, lempar error yang jelas (ini yang nyegah null.items)
-  if (!ct.includes("application/json")) {
-    const snippet = (text || "").slice(0, 240).replace(/[<>]/g, s => ({'<':'&lt;','>':'&gt;'}[s]));
-    throw new Error(`Response bukan JSON (status ${res.status}). Snippet: ${snippet}`);
+  function esc(s) {
+    return String(s ?? "").replace(/[&<>"']/g, m => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+    }[m]));
   }
 
-  let data = null;
-  try { data = text ? JSON.parse(text) : null; } catch {}
-
-  if (!res.ok) {
-    throw new Error(`${res.status} ${(data && data.error) ? data.error : res.statusText}`);
+  function fmtBytes(n) {
+    n = Number(n || 0);
+    if (!n) return "-";
+    const u = ["B","KB","MB","GB"];
+    let i=0;
+    while (n >= 1024 && i < u.length-1) { n/=1024; i++; }
+    return `${n.toFixed(i===0?0:1)} ${u[i]}`;
   }
-  if (!data || typeof data !== "object") {
-    throw new Error(`JSON invalid/empty (status ${res.status})`);
-  }
-  return data;
-}
 
+  function toast(msg) {
+    const t = $("toast");
+    t.textContent = msg;
+    t.style.display = "block";
+    clearTimeout(window.__toastT);
+    window.__toastT = setTimeout(() => { t.style.display = "none"; }, 2200);
+  }
+
+  async function apiJson(path, { method="GET", token, body } = {}) {
+    const headers = new Headers();
+    if (token) headers.set("Authorization", `Bearer ${token}`);
+    if (body) headers.set("content-type", "application/json; charset=utf-8");
+
+    const res = await fetch(path, { method, headers, body: body ? JSON.stringify(body) : undefined });
+
+    const ct = res.headers.get("content-type") || "";
+    const text = await res.text();
+
+    if (!ct.includes("application/json")) {
+      const snippet = (text || "").slice(0, 240).replace(/[<>]/g, s => ({'<':'&lt;','>':'&gt;'}[s]));
+      throw new Error(`Response bukan JSON (status ${res.status}). Snippet: ${snippet}`);
+    }
+
+    let data = null;
+    try { data = text ? JSON.parse(text) : null; } catch {}
+
+    if (!res.ok) throw new Error(`${res.status} ${(data && data.error) ? data.error : res.statusText}`);
+    if (!data || typeof data !== "object") throw new Error(`JSON invalid/empty (status ${res.status})`);
+    return data;
+  }
 
   async function uploadCover(token, slug, file) {
-  const fd = new FormData();
-  fd.set("slug", slug);
-  fd.set("cover", file); // penting: cover, bukan file
+    const fd = new FormData();
+    fd.set("slug", slug);
+    fd.set("cover", file);
 
-  const res = await fetch("/api/admin/cover-upload", {
-    method: "POST",
-    headers: { "Authorization": `Bearer ${token}` },
-    body: fd
-  });
+    const res = await fetch("/api/admin/cover-upload", {
+      method: "POST",
+      headers: { "Authorization": `Bearer ${token}` },
+      body: fd
+    });
 
-  const ct = res.headers.get("content-type") || "";
-  const text = await res.text();
+    const ct = res.headers.get("content-type") || "";
+    const text = await res.text();
 
-  if (!ct.includes("application/json")) {
-    const snippet = (text || "").slice(0, 240).replace(/[<>]/g, s => ({'<':'&lt;','>':'&gt;'}[s]));
-    throw new Error(`Cover upload: response bukan JSON (status ${res.status}). Snippet: ${snippet}`);
+    if (!ct.includes("application/json")) {
+      const snippet = (text || "").slice(0, 240).replace(/[<>]/g, s => ({'<':'&lt;','>':'&gt;'}[s]));
+      throw new Error(`Cover upload: response bukan JSON (status ${res.status}). Snippet: ${snippet}`);
+    }
+
+    let data = null;
+    try { data = text ? JSON.parse(text) : null; } catch {}
+    if (!res.ok) throw new Error(`${res.status} ${(data && data.error) ? data.error : res.statusText}`);
+
+    return data.cover_url || data.coverUrl || null;
   }
 
-  let data = null;
-  try { data = text ? JSON.parse(text) : null; } catch {}
-  if (!res.ok) throw new Error(`${res.status} ${(data && data.error) ? data.error : res.statusText}`);
+  async function pingApi() {
+    try {
+      const r = await fetch("/api/ping", { cache:"no-store" });
+      const ok = r.ok && (r.headers.get("content-type") || "").includes("application/json");
+      $("dotApi").className = "dot " + (ok ? "ok" : "bad");
+    } catch {
+      $("dotApi").className = "dot bad";
+    }
+  }
 
-  // terima cover_url atau coverUrl
-  return data.cover_url || data.coverUrl || null;
-}
+  function render(items) {
+    const tbody = $("tbody");
+    if (!items.length) {
+      tbody.innerHTML = `<tr><td colspan="7" class="muted">Tidak ada data.</td></tr>`;
+      return;
+    }
 
-
-  function render(items, meta) {
-    $("meta").textContent = meta || "";
-    $("tbody").innerHTML = items.map(g => {
+    tbody.innerHTML = items.map(g => {
       const pub = Number(g.is_published) === 1;
-      const size = g.file_size_bytes ? (g.file_size_bytes/1024/1024).toFixed(1)+" MB" : "-";
+      const badge = pub
+        ? `<span class="badge pub"><span class="dot ok"></span> Published</span>`
+        : `<span class="badge draft"><span class="dot warn"></span> Draft</span>`;
+
+      const cover = g.cover_url ? esc(g.cover_url) : "";
+      const size = fmtBytes(g.file_size_bytes);
+
       return `
         <tr>
-          <td class="mono">${g.slug}</td>
-          <td>${escapeHtml(g.title || "")}</td>
           <td>
-            <div><span class="pill">${escapeHtml(g.genre || "-")}</span></div>
-            <div class="muted">${escapeHtml(g.platform || "")}</div>
+            <img class="coverSm" src="${cover}" alt="" onerror="this.style.opacity=.35" />
           </td>
-          <td>${pub ? '<span class="pill">Published</span>' : '<span class="pill">Draft</span>'}</td>
+          <td class="mono">${esc(g.slug)}</td>
           <td>
-            <div class="muted">${escapeHtml(g.file_name || "")}</div>
-            <div class="mono">${size}</div>
-            <div><a href="/api/download/${encodeURIComponent(g.slug)}" target="_blank">Download link</a></div>
+            <div style="font-weight:800;letter-spacing:.1px">${esc(g.title || "")}</div>
+            <div class="muted" style="margin-top:6px;font-size:12px">
+              Updated: <span class="mono">${esc(g.updated_at || "-")}</span>
+            </div>
+          </td>
+          <td>
+            <div class="badge"><span class="dot"></span> ${esc(g.genre || "-")}</div>
+            <div class="muted" style="margin-top:6px">${esc(g.platform || "")}</div>
+          </td>
+          <td>${badge}</td>
+          <td>
+            <div class="muted">${esc(g.file_name || "")}</div>
+            <div class="mono" style="margin-top:6px">${size}</div>
+            <div style="margin-top:6px">
+              <a href="/api/download/${encodeURIComponent(g.slug)}" target="_blank" rel="noopener">Download</a>
+            </div>
           </td>
           <td>
             <div class="actions">
-              <button class="btn ghost" data-edit="${g.slug}">Edit</button>
+              <button class="btn btnSm ghost" data-edit="${esc(g.slug)}" type="button">Edit</button>
             </div>
           </td>
         </tr>
       `;
     }).join("");
 
-    // bind edit
-    [...document.querySelectorAll("[data-edit]")].forEach(btn => {
+    document.querySelectorAll("[data-edit]").forEach(btn => {
       btn.addEventListener("click", () => openEdit(btn.getAttribute("data-edit")));
     });
-  }
-
-  function escapeHtml(s) {
-    return String(s || "").replace(/[&<>"']/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
   }
 
   async function loadList() {
@@ -257,6 +551,8 @@ async function apiJson(path, { method="GET", token, body } = {}) {
     const published = $("published").value;
 
     $("btnLoad").disabled = true;
+    $("meta").textContent = "Loading…";
+
     try {
       const qs = new URLSearchParams();
       qs.set("page","1");
@@ -265,13 +561,17 @@ async function apiJson(path, { method="GET", token, body } = {}) {
       if (published === "1" || published === "0") qs.set("published", published);
 
       const data = await apiJson(`/api/admin/games?${qs.toString()}`, { token });
-// kalau mau pakai alias lama: `/api/admin/games-list?...`
 
       currentItems = Array.isArray(data.items) ? data.items : [];
-render(currentItems, `Total: ${data.total ?? 0} • Menampilkan: ${currentItems.length}`);
+      render(currentItems);
 
+      const total = data.total ?? 0;
+      $("meta").textContent = `Total: ${total} • Menampilkan: ${currentItems.length} • ${new Date().toLocaleString()}`;
+      toast("List updated ✅");
     } catch (e) {
       alert(e.message);
+      $("meta").textContent = "Gagal load.";
+      render([]);
     } finally {
       $("btnLoad").disabled = false;
     }
@@ -290,22 +590,32 @@ render(currentItems, `Total: ${data.total ?? 0} • Menampilkan: ${currentItems.
 
     const cover = editing.cover_url || "";
     $("mCoverPrev").src = cover || "";
+    $("mCover").value = "";
     $("mStatus").textContent = "";
 
+    $("mInfo").innerHTML = `
+      File: <span class="mono">${esc(editing.file_name || "-")}</span> •
+      Size: <span class="mono">${esc(fmtBytes(editing.file_size_bytes))}</span><br/>
+      SHA256: <span class="mono">${esc(editing.sha256 || "-")}</span>
+    `;
+
     $("modal").style.display = "flex";
+    $("modal").setAttribute("aria-hidden", "false");
   }
 
   function closeModal() {
     $("modal").style.display = "none";
+    $("modal").setAttribute("aria-hidden", "true");
     $("mCover").value = "";
     editing = null;
   }
 
   $("mClose").addEventListener("click", closeModal);
   $("modal").addEventListener("click", (e) => { if (e.target.id === "modal") closeModal(); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && $("modal").style.display === "flex") closeModal(); });
 
   $("mCover").addEventListener("change", () => {
-    const f = $("mCover").files[0];
+    const f = $("mCover").files && $("mCover").files[0];
     if (!f) return;
     $("mCoverPrev").src = URL.createObjectURL(f);
   });
@@ -315,38 +625,38 @@ render(currentItems, `Total: ${data.total ?? 0} • Menampilkan: ${currentItems.
     if (!token || !editing) return;
 
     $("mSave").disabled = true;
-    $("mStatus").textContent = "Menyimpan...";
+    $("mStatus").textContent = "Menyimpan…";
 
     try {
       let cover_url = editing.cover_url || null;
-      const coverFile = $("mCover").files[0];
+      const coverFile = $("mCover").files && $("mCover").files[0];
       if (coverFile) {
-        $("mStatus").textContent = "Upload cover...";
+        $("mStatus").textContent = "Upload cover…";
         cover_url = await uploadCover(token, editing.slug, coverFile);
       }
 
-      $("mStatus").textContent = "Update metadata...";
-      const up = await apiJson("/api/admin/game-update", { method:"POST", token, body: {
-        method: "POST",
-        token,
-        body: {
-          slug: editing.slug,
-          title: $("mTitle").value.trim() || editing.slug,
-          genre: $("mGenre").value.trim() || null,
-          platform: $("mPlatform").value.trim() || null,
-          short_desc: $("mDesc").value.trim() || null,
-          cover_url,
-          is_published: $("mPub").value === "1"
-        }
-      }});
+      $("mStatus").textContent = "Update metadata…";
 
-      // refresh list item
+      // >>> FIX BUG: body jangan nested method/token/body lagi
+      const payload = {
+        slug: editing.slug,
+        title: $("mTitle").value.trim() || editing.slug,
+        genre: $("mGenre").value.trim() || null,
+        platform: $("mPlatform").value.trim() || null,
+        short_desc: $("mDesc").value.trim() || null,
+        cover_url,
+        is_published: $("mPub").value === "1"
+      };
+
+      const up = await apiJson("/api/admin/game-update", { method:"POST", token, body: payload });
+
       const updated = up.item || up.game || up;
       const idx = currentItems.findIndex(x => x.slug === editing.slug);
       if (idx >= 0 && updated && updated.slug) currentItems[idx] = updated;
-      render(currentItems, $("meta").textContent);
 
+      render(currentItems);
       $("mStatus").textContent = "Sukses ✅";
+      toast("Saved ✅");
     } catch (e) {
       $("mStatus").textContent = "Gagal ❌ " + e.message;
       alert(e.message);
@@ -363,7 +673,7 @@ render(currentItems, `Total: ${data.total ?? 0} • Menampilkan: ${currentItems.
     const delFiles = confirm("Sekalian hapus file game & cover dari R2? (OK = ya)");
 
     $("mDelete").disabled = true;
-    $("mStatus").textContent = "Menghapus...";
+    $("mStatus").textContent = "Menghapus…";
 
     try {
       await apiJson("/api/admin/game-delete", {
@@ -371,8 +681,10 @@ render(currentItems, `Total: ${data.total ?? 0} • Menampilkan: ${currentItems.
         token,
         body: { slug: editing.slug, delete_files: delFiles }
       });
+
       currentItems = currentItems.filter(x => x.slug !== editing.slug);
-      render(currentItems, $("meta").textContent);
+      render(currentItems);
+      toast("Deleted 🗑️");
       closeModal();
     } catch (e) {
       alert(e.message);
@@ -382,7 +694,13 @@ render(currentItems, `Total: ${data.total ?? 0} • Menampilkan: ${currentItems.
     }
   });
 
+  // UX: Enter untuk load + auto load saat filter berubah
+  $("q").addEventListener("keydown", (e) => { if (e.key === "Enter") loadList(); });
+  $("published").addEventListener("change", () => loadList());
   $("btnLoad").addEventListener("click", loadList);
+
+  pingApi();
 </script>
 </body>
 </html>
+ 
