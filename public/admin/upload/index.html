@@ -78,7 +78,8 @@
         </div>
         <div>
           <label>Cover (upload dari PC)</label>
-          <input id="cover" type="file" accept="image/*" />
+          <input id="cover" name="cover" type="file" accept="image/*" required>
+
           <div class="preview">
             <img id="coverPreview" class="img" alt="cover preview" />
             <div class="small" id="coverInfo">Belum ada cover dipilih.</div>
@@ -270,25 +271,27 @@
   }
 
   async function uploadCoverIfAny(token, slug) {
-    const f = $("cover").files[0];
-    if (!f) return null;
+  const f = $("cover").files?.[0];
+  if (!f) return null;
 
-    const fd = new FormData();
-    fd.set("slug", slug);
-    fd.set("file", f);
+  const fd = new FormData();
+  fd.append("slug", slug);
+  fd.append("cover", f, f.name); // ✅ harus "cover", bukan "file"
 
-    const res = await fetch("/api/admin/cover-upload", {
-      method: "POST",
-      headers: { "Authorization": `Bearer ${token}` },
-      body: fd
-    });
-    const text = await res.text();
-    let data = null;
-    try { data = text ? JSON.parse(text) : null; } catch {}
-    if (!res.ok) throw new Error(`${res.status} ${(data && data.error) ? data.error : (text || res.statusText)}`);
+  const res = await fetch("/api/admin/cover-upload", {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+    body: fd
+  });
 
-    return data.coverUrl; // /api/cover?key=...
-  }
+  const text = await res.text();
+  let data = null;
+  try { data = text ? JSON.parse(text) : null; } catch {}
+  if (!res.ok) throw new Error(`${res.status} ${(data && data.error) ? data.error : (text || res.statusText)}`);
+
+  return data.coverUrl; // /api/cover?key=...
+}
+
 
   async function uploadSequential(file, token, key, uploadId) {
     const totalParts = Math.ceil(file.size / CHUNK_SIZE);
