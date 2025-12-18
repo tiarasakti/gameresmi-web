@@ -358,6 +358,44 @@
     }
   });
 
+  function resetFormAfterSuccess() {
+  // kosongkan file & cover
+  $("file").value = "";
+  $("cover").value = "";
+
+  // kosongkan field teks
+  $("slug").value = "";
+  $("key").value = "";
+  $("title").value = "";
+  $("platform").value = "";
+  $("short_desc").value = "";
+  $("genreNew").value = "";
+
+  // reset select
+  renderGenres();                 // balik ke default list
+  $("genre").selectedIndex = 0;   // pilih pertama
+  $("is_published").value = "1";  // default Ya
+
+  // reset preview cover
+  $("coverPreview").src = "";
+  $("coverInfo").textContent = "Belum ada cover dipilih.";
+
+  // reset progress UI
+  barFill.style.width = "0%";
+  $("bytes").textContent = bytesFmt(0);
+  $("total").textContent = bytesFmt(0);
+  $("speed").textContent = "0 MB/s";
+  $("speedAvg").textContent = "0 MB/s";
+
+  // reset status & abort state
+  $("status").textContent = "Siap upload.";
+  $("btnAbort").disabled = true;
+  current = { key: null, uploadId: null };
+
+  // scroll ke atas biar enak (opsional)
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
   $("btnUpload").addEventListener("click", async () => {
   const token = $("token").value.trim();
   const file = $("file").files[0];
@@ -443,6 +481,7 @@
     }
 
     $("status").textContent = "DONE ✅ (cek Manage)";
+    resetFormAfterSuccess();
   } catch (e) {
     $("status").textContent = "ERROR ❌";
     alert(e.message);
@@ -454,4 +493,3 @@
 </script>
 </body>
 </html>
-
