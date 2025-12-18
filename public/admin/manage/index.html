@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin • Manage Games</title>
+  <style>
+    :root { color-scheme: dark; }
+    body{font-family:system-ui;margin:0;background:#0b1020;color:#e9eeff}
+    .wrap{max-width:1100px;margin:34px auto;padding:0 16px}
+    .card{background:#121a33;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:18px}
+    .top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+    h1{margin:0;font-size:18px}
+    .muted{opacity:.8;font-size:12px}
+    input,textarea,button,select{font:inherit}
+    input,textarea,select{padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.15);background:#0e1630;color:#e9eeff;box-sizing:border-box}
+    .btn{display:inline-flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;border:0;background:#4aa3ff;color:#071022;cursor:pointer;font-weight:700}
+    .ghost{background:rgba(255,255,255,.08);color:#e9eeff;border:1px solid rgba(255,255,255,.12)}
+    .danger{background:#ff5b6e;color:#1a0b10}
+    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+    .row > * { flex: 1; min-width: 180px; }
+    table{width:100%;border-collapse:collapse;margin-top:12px;font-size:13px}
+    th,td{padding:10px;border-bottom:1px solid rgba(255,255,255,.08);vertical-align:top}
+    th{opacity:.85;text-align:left;font-size:12px}
+    .pill{display:inline-block;padding:2px 8px;border-radius:999px;background:rgba(255,255,255,.08);font-size:12px}
+    .mono{font-family:ui-monospace,Menlo,Consolas,monospace}
+    .actions{display:flex;gap:8px;flex-wrap:wrap}
+    .modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;padding:16px}
+    .modal .box{max-width:720px;width:100%;background:#121a33;border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:16px}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+    .img{width:74px;height:74px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:#0e1630;object-fit:cover}
+    a{color:#9ad1ff}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="top">
+        <div>
+          <h1>Manage Games</h1>
+          <div class="muted">Edit metadata, publish/draft, ganti cover, hapus game.</div>
+        </div>
+        <div class="row" style="margin:0;flex:initial">
+          <a class="btn ghost" href="/admin/upload/">Upload</a>
+          <a class="btn ghost" href="/">Home</a>
+        </div>
+      </div>
+
+      <div class="row">
+        <div>
+          <div class="muted">ADMIN_TOKEN (Bearer)</div>
+          <input id="token" type="password" placeholder="Tempel token (session)" />
+        </div>
+        <div>
+          <div class="muted">Cari (judul/slug)</div>
+          <input id="q" placeholder="mis: gta / mario / ats-ove..." />
+        </div>
+        <div>
+          <div class="muted">Filter</div>
+          <select id="published">
+            <option value="">Semua</option>
+            <option value="1">Published</option>
+            <option value="0">Draft</option>
+          </select>
+        </div>
+        <div style="flex:0;min-width:140px">
+          <button id="btnLoad" class="btn" type="button">Load</button>
+        </div>
+      </div>
+
+      <div class="muted" id="meta"></div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Slug</th>
+            <th>Title</th>
+            <th>Genre / Platform</th>
+            <th>Status</th>
+            <th>File</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="modal" id="modal">
+    <div class="box">
+      <div class="top">
+        <div>
+          <div class="muted">Edit Game</div>
+          <div class="mono" id="mSlug"></div>
+        </div>
+        <button class="btn ghost" id="mClose">Tutup</button>
+      </div>
+
+      <div class="grid2" style="margin-top:12px">
+        <div>
+          <div class="muted">Title</div>
+          <input id="mTitle" />
+        </div>
+        <div>
+          <div class="muted">Publish?</div>
+          <select id="mPub">
+            <option value="1">Ya</option>
+            <option value="0">Tidak (draft)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid3" style="margin-top:10px">
+        <div>
+          <div class="muted">Genre</div>
+          <input id="mGenre" placeholder="Action, RPG, ..." />
+        </div>
+        <div>
+          <div class="muted">Platform</div>
+          <input id="mPlatform" placeholder="PC, PS2, ..." />
+        </div>
+        <div>
+          <div class="muted">Cover (upload baru)</div>
+          <input id="mCover" type="file" accept="image/*" />
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:10px">
+        <img id="mCoverPrev" class="img" alt="cover" />
+        <div style="flex:1">
+          <div class="muted">Short desc</div>
+          <textarea id="mDesc" style="width:100%;min-height:74px"></textarea>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:12px">
+        <button class="btn" id="mSave">Simpan</button>
+        <button class="btn danger" id="mDelete">Hapus</button>
+        <div class="muted" id="mStatus" style="flex:2"></div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  const $ = (id) => document.getElementById(id);
+
+  const savedToken = sessionStorage.getItem("ADMIN_TOKEN") || "";
+  if (savedToken) $("token").value = savedToken;
+  $("token").addEventListener("input", () => {
+    sessionStorage.setItem("ADMIN_TOKEN", $("token").value.trim());
+  });
+
+  let currentItems = [];
+  let editing = null;
+
+async function apiJson(path, { method="GET", token, body } = {}) {
+  const headers = new Headers();
+  if (token) headers.set("Authorization", `Bearer ${token}`);
+  if (body) headers.set("content-type", "application/json; charset=utf-8");
+
+  const res = await fetch(path, { method, headers, body: body ? JSON.stringify(body) : undefined });
+
+  const ct = res.headers.get("content-type") || "";
+  const text = await res.text();
+
+  // Kalau bukan JSON, lempar error yang jelas (ini yang nyegah null.items)
+  if (!ct.includes("application/json")) {
+    const snippet = (text || "").slice(0, 240).replace(/[<>]/g, s => ({'<':'&lt;','>':'&gt;'}[s]));
+    throw new Error(`Response bukan JSON (status ${res.status}). Snippet: ${snippet}`);
+  }
+
+  let data = null;
+  try { data = text ? JSON.parse(text) : null; } catch {}
+
+  if (!res.ok) {
+    throw new Error(`${res.status} ${(data && data.error) ? data.error : res.statusText}`);
+  }
+  if (!data || typeof data !== "object") {
+    throw new Error(`JSON invalid/empty (status ${res.status})`);
+  }
+  return data;
+}
+
+
+  async function uploadCover(token, slug, file) {
+  const fd = new FormData();
+  fd.set("slug", slug);
+  fd.set("cover", file); // penting: cover, bukan file
+
+  const res = await fetch("/api/admin/cover-upload", {
+    method: "POST",
+    headers: { "Authorization": `Bearer ${token}` },
+    body: fd
+  });
+
+  const ct = res.headers.get("content-type") || "";
+  const text = await res.text();
+
+  if (!ct.includes("application/json")) {
+    const snippet = (text || "").slice(0, 240).replace(/[<>]/g, s => ({'<':'&lt;','>':'&gt;'}[s]));
+    throw new Error(`Cover upload: response bukan JSON (status ${res.status}). Snippet: ${snippet}`);
+  }
+
+  let data = null;
+  try { data = text ? JSON.parse(text) : null; } catch {}
+  if (!res.ok) throw new Error(`${res.status} ${(data && data.error) ? data.error : res.statusText}`);
+
+  // terima cover_url atau coverUrl
+  return data.cover_url || data.coverUrl || null;
+}
+
+
+  function render(items, meta) {
+    $("meta").textContent = meta || "";
+    $("tbody").innerHTML = items.map(g => {
+      const pub = Number(g.is_published) === 1;
+      const size = g.file_size_bytes ? (g.file_size_bytes/1024/1024).toFixed(1)+" MB" : "-";
+      return `
+        <tr>
+          <td class="mono">${g.slug}</td>
+          <td>${escapeHtml(g.title || "")}</td>
+          <td>
+            <div><span class="pill">${escapeHtml(g.genre || "-")}</span></div>
+            <div class="muted">${escapeHtml(g.platform || "")}</div>
+          </td>
+          <td>${pub ? '<span class="pill">Published</span>' : '<span class="pill">Draft</span>'}</td>
+          <td>
+            <div class="muted">${escapeHtml(g.file_name || "")}</div>
+            <div class="mono">${size}</div>
+            <div><a href="/api/download/${encodeURIComponent(g.slug)}" target="_blank">Download link</a></div>
+          </td>
+          <td>
+            <div class="actions">
+              <button class="btn ghost" data-edit="${g.slug}">Edit</button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join("");
+
+    // bind edit
+    [...document.querySelectorAll("[data-edit]")].forEach(btn => {
+      btn.addEventListener("click", () => openEdit(btn.getAttribute("data-edit")));
+    });
+  }
+
+  function escapeHtml(s) {
+    return String(s || "").replace(/[&<>"']/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
+  }
+
+  async function loadList() {
+    const token = $("token").value.trim();
+    if (!token) return alert("Isi ADMIN_TOKEN dulu.");
+
+    const q = $("q").value.trim();
+    const published = $("published").value;
+
+    $("btnLoad").disabled = true;
+    try {
+      const qs = new URLSearchParams();
+      qs.set("page","1");
+      qs.set("limit","100");
+      if (q) qs.set("q", q);
+      if (published === "1" || published === "0") qs.set("published", published);
+
+      const data = await apiJson(`/api/admin/games?${qs.toString()}`, { token });
+// kalau mau pakai alias lama: `/api/admin/games-list?...`
+
+      currentItems = Array.isArray(data.items) ? data.items : [];
+render(currentItems, `Total: ${data.total ?? 0} • Menampilkan: ${currentItems.length}`);
+
+    } catch (e) {
+      alert(e.message);
+    } finally {
+      $("btnLoad").disabled = false;
+    }
+  }
+
+  function openEdit(slug) {
+    editing = currentItems.find(x => x.slug === slug);
+    if (!editing) return;
+
+    $("mSlug").textContent = editing.slug;
+    $("mTitle").value = editing.title || "";
+    $("mGenre").value = editing.genre || "";
+    $("mPlatform").value = editing.platform || "";
+    $("mDesc").value = editing.short_desc || "";
+    $("mPub").value = Number(editing.is_published) === 1 ? "1" : "0";
+
+    const cover = editing.cover_url || "";
+    $("mCoverPrev").src = cover || "";
+    $("mStatus").textContent = "";
+
+    $("modal").style.display = "flex";
+  }
+
+  function closeModal() {
+    $("modal").style.display = "none";
+    $("mCover").value = "";
+    editing = null;
+  }
+
+  $("mClose").addEventListener("click", closeModal);
+  $("modal").addEventListener("click", (e) => { if (e.target.id === "modal") closeModal(); });
+
+  $("mCover").addEventListener("change", () => {
+    const f = $("mCover").files[0];
+    if (!f) return;
+    $("mCoverPrev").src = URL.createObjectURL(f);
+  });
+
+  $("mSave").addEventListener("click", async () => {
+    const token = $("token").value.trim();
+    if (!token || !editing) return;
+
+    $("mSave").disabled = true;
+    $("mStatus").textContent = "Menyimpan...";
+
+    try {
+      let cover_url = editing.cover_url || null;
+      const coverFile = $("mCover").files[0];
+      if (coverFile) {
+        $("mStatus").textContent = "Upload cover...";
+        cover_url = await uploadCover(token, editing.slug, coverFile);
+      }
+
+      $("mStatus").textContent = "Update metadata...";
+      const up = await apiJson("/api/admin/game-update", { method:"POST", token, body: {
+        method: "POST",
+        token,
+        body: {
+          slug: editing.slug,
+          title: $("mTitle").value.trim() || editing.slug,
+          genre: $("mGenre").value.trim() || null,
+          platform: $("mPlatform").value.trim() || null,
+          short_desc: $("mDesc").value.trim() || null,
+          cover_url,
+          is_published: $("mPub").value === "1"
+        }
+      }});
+
+      // refresh list item
+      const updated = up.item || up.game || up;
+      const idx = currentItems.findIndex(x => x.slug === editing.slug);
+      if (idx >= 0 && updated && updated.slug) currentItems[idx] = updated;
+      render(currentItems, $("meta").textContent);
+
+      $("mStatus").textContent = "Sukses ✅";
+    } catch (e) {
+      $("mStatus").textContent = "Gagal ❌ " + e.message;
+      alert(e.message);
+    } finally {
+      $("mSave").disabled = false;
+    }
+  });
+
+  $("mDelete").addEventListener("click", async () => {
+    const token = $("token").value.trim();
+    if (!token || !editing) return;
+
+    if (!confirm(`Hapus "${editing.slug}" dari database?`)) return;
+    const delFiles = confirm("Sekalian hapus file game & cover dari R2? (OK = ya)");
+
+    $("mDelete").disabled = true;
+    $("mStatus").textContent = "Menghapus...";
+
+    try {
+      await apiJson("/api/admin/game-delete", {
+        method: "POST",
+        token,
+        body: { slug: editing.slug, delete_files: delFiles }
+      });
+      currentItems = currentItems.filter(x => x.slug !== editing.slug);
+      render(currentItems, $("meta").textContent);
+      closeModal();
+    } catch (e) {
+      alert(e.message);
+      $("mStatus").textContent = "Gagal ❌ " + e.message;
+    } finally {
+      $("mDelete").disabled = false;
+    }
+  });
+
+  $("btnLoad").addEventListener("click", loadList);
+</script>
+</body>
+</html>
