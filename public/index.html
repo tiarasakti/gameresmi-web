@@ -3,8 +3,75 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>TSGames: List & Download Game Terlengkap</title>
-  <meta name="description" content="Katalog game di gameresmi.pw. Cari judul, pilih genre, dan unduh game." />
+ <title>TSGames: List & Download Game Terlengkap</title>
+<meta name="description" content="Katalog game di gameresmi.pw. Cari judul, pilih genre, dan unduh game." />
+
+<!-- Canonical (akan di-update JS sesuai ?q=&page=) -->
+<link rel="canonical" href="https://gameresmi.pw/" />
+
+<!-- Robots -->
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+<meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+
+<!-- Hreflang (kalau cuma Indonesia cukup ini) -->
+<link rel="alternate" hreflang="id" href="https://gameresmi.pw/" />
+<link rel="alternate" hreflang="x-default" href="https://gameresmi.pw/" />
+
+<!-- Open Graph -->
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="TSGames" />
+<meta property="og:locale" content="id_ID" />
+<meta property="og:title" content="TSGames: List & Download Game Terlengkap" />
+<meta property="og:description" content="Katalog game di gameresmi.pw. Cari judul, pilih genre, dan unduh game." />
+<meta property="og:url" content="https://gameresmi.pw/" />
+<meta property="og:image" content="https://gameresmi.pw/assets/tsgames-logo.png" />
+<meta property="og:image:width" content="512" />
+<meta property="og:image:height" content="512" />
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="TSGames: List & Download Game Terlengkap" />
+<meta name="twitter:description" content="Katalog game di gameresmi.pw. Cari judul, pilih genre, dan unduh game." />
+<meta name="twitter:image" content="https://gameresmi.pw/assets/tsgames-logo.png" />
+
+<!-- Extra -->
+<meta name="application-name" content="TSGames" />
+<meta name="referrer" content="strict-origin-when-cross-origin" />
+<link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+
+<!-- Performance kecil -->
+<link rel="preload" as="image" href="assets/tsgames-logo.png" fetchpriority="high" />
+
+<!-- JSON-LD base: Website + SearchAction -->
+<script type="application/ld+json" id="ld-base">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://gameresmi.pw/#website",
+      "name": "TSGames",
+      "url": "https://gameresmi.pw/",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://gameresmi.pw/?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://gameresmi.pw/#org",
+      "name": "TSGames",
+      "url": "https://gameresmi.pw/",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://gameresmi.pw/assets/tsgames-logo.png"
+      }
+    }
+  ]
+}
+</script>
+
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -954,6 +1021,97 @@
   </footer>
 
 <script>
+
+  // ===== SEO helpers (dynamic) =====
+  function upsertMeta(attr, key, value){
+    let el = document.querySelector(`meta[${attr}="${CSS.escape(key)}"]`);
+    if (!el){
+      el = document.createElement("meta");
+      el.setAttribute(attr, key);
+      document.head.appendChild(el);
+    }
+    el.setAttribute("content", value);
+  }
+
+  function setCanonical(url){
+    let link = document.querySelector('link[rel="canonical"]');
+    if (!link){
+      link = document.createElement("link");
+      link.rel = "canonical";
+      document.head.appendChild(link);
+    }
+    link.href = url;
+  }
+
+  function setJsonLd(id, obj){
+    let s = document.getElementById(id);
+    if (!s){
+      s = document.createElement("script");
+      s.type = "application/ld+json";
+      s.id = id;
+      document.head.appendChild(s);
+    }
+    s.textContent = JSON.stringify(obj);
+  }
+
+  function buildSeoText({ q, page, total, items }){
+    const baseTitle = "TSGames: List & Download Game Terlengkap";
+    const cleanQ = (q || "").trim();
+    const pageTxt = page > 1 ? ` • Halaman ${page}` : "";
+    const title = cleanQ ? `${cleanQ} — TSGames${pageTxt}` : `${baseTitle}${pageTxt}`;
+
+    // Deskripsi dibuat “informatif”, bukan keyword stuffing (Google benci yang maksa)
+    const topNames = (items || []).slice(0, 3).map(x => x?.title).filter(Boolean);
+    const extra = topNames.length ? ` Contoh: ${topNames.join(", ")}.` : "";
+    const desc = cleanQ
+      ? `Cari dan download game "${cleanQ}" di TSGames. Lihat genre, platform, ukuran file, dan tautan unduhan.${extra}`
+      : `Katalog game di gameresmi.pw. Cari judul, pilih genre, dan unduh game. Update rutin dengan info genre, platform, dan ukuran file.${extra}`;
+
+    return { title, desc };
+  }
+
+  function applySeo({ q, page, total, items }){
+    const { title, desc } = buildSeoText({ q, page, total, items });
+
+    // canonical mengikuti state (biar query/page punya URL “resmi”)
+    const u = new URL(location.href);
+    // rapikan UTM dll kalau ada
+    ["utm_source","utm_medium","utm_campaign","utm_term","utm_content","fbclid","gclid"].forEach(k => u.searchParams.delete(k));
+    setCanonical(u.toString());
+
+    document.title = title;
+
+    upsertMeta("name", "description", desc);
+
+    // OG/Twitter update (penting kalau share)
+    upsertMeta("property", "og:title", title);
+    upsertMeta("property", "og:description", desc);
+    upsertMeta("property", "og:url", u.toString());
+    upsertMeta("name", "twitter:title", title);
+    upsertMeta("name", "twitter:description", desc);
+
+    // JSON-LD: ItemList untuk daftar game yang sedang tampil
+    const list = (items || []).map((it, idx) => {
+      const slug = it?.slug || "";
+      return {
+        "@type": "ListItem",
+        "position": idx + 1,
+        "url": new URL(`download.html?slug=${encodeURIComponent(slug)}`, location.origin).toString(),
+        "name": it?.title || slug
+      };
+    });
+
+    setJsonLd("ld-itemlist", {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "name": q ? `Hasil pencarian: ${q}` : "Daftar game",
+      "itemListOrder": "https://schema.org/ItemListOrderAscending",
+      "numberOfItems": list.length,
+      "itemListElement": list
+    });
+  }
+
+
   const PAGE_SIZE = 15;
 
   // Mobile menu
@@ -1305,6 +1463,8 @@
 
   async function loadAll(){
     const st = getState();
+    applySeo({ q: st.q || "", page: st.page || 1, total: 0, items: [] });
+
     els.searchInput.value = st.q || "";
     setHint(st.q || "");
 
@@ -1323,6 +1483,14 @@
     try{
       const data = await fetchGames({ page: st.page, limit: PAGE_SIZE, q: st.q || "" });
       renderPosts(data);
+
+      applySeo({
+  q: st.q || "",
+  page: Number(data.page || st.page || 1),
+  total: Number(data.total || 0),
+  items: Array.isArray(data.items) ? data.items : []
+});
+
     }catch(e){
       els.posts.innerHTML = `
         <div class="postCard">
@@ -1356,4 +1524,3 @@
 </script>
 </body>
 </html>
-
