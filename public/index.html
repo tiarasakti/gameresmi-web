@@ -3,988 +3,1107 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>gameresmi.pw</title>
+  <title>TSGames: List & Download Game Terlengkap</title>
+  <meta name="description" content="Katalog game di gameresmi.pw. Cari judul, pilih genre, dan unduh game." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+
   <style>
     :root{
-      --bg0:#070a14;
-      --bg1:#0b1026;
-      --panel: rgba(255,255,255,.06);
-      --border: rgba(255,255,255,.12);
-      --text:#eaf0ff;
-      --muted: rgba(234,240,255,.65);
+      --bg:#1f2328;
+      --bg2:#2b2f33;
+      --panel:#f3f4f6;
+      --panel2:#ffffff;
+      --text:#e8eaed;
+      --muted:rgba(232,234,237,.72);
+      --dark:#101316;
 
-      --neon1:#a855f7; /* purple */
-      --neon2:#22d3ee; /* cyan */
-      --neon3:#f97316; /* orange */
+      --blue:#0ea5e9;
+      --blue2:#1d4ed8;
 
-      --shadow: 0 18px 60px rgba(0,0,0,.55);
-      --radius: 18px;
+      --pill:#0b5e7a;
+      --pillBorder:rgba(255,255,255,.25);
+
+      --line:rgba(255,255,255,.12);
+      --line2:rgba(0,0,0,.08);
+
+      --shadow: 0 18px 50px rgba(0,0,0,.35);
+      --r:14px;
+      --r2:18px;
+      --max: 1180px;
     }
 
     *{ box-sizing:border-box }
     html,body{ height:100% }
-    body{
-      margin:0;
-      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans";
-      color:var(--text);
-      background: #070a14;
-      overflow-x:hidden;
-    }
+body{
+  margin:0;
+  font-family: "Rajdhani", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans";
+  background: radial-gradient(900px 380px at 50% 0%, rgba(14,165,233,.18), transparent 55%),
+              linear-gradient(180deg, #14171a, #1f2328 45%, #1b1f23);
+  color: var(--text);
+  overflow-x:hidden;
+}
 
-    body::before{
-      content:"";
-      position:fixed;
-      inset:0;
-      pointer-events:none;
-      opacity:.18;
-      background:
-        linear-gradient(to right, rgba(255,255,255,.08) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(255,255,255,.08) 1px, transparent 1px);
-      background-size: 64px 64px;
-      mask-image: radial-gradient(circle at 40% 10%, rgba(0,0,0,1), rgba(0,0,0,.2) 55%, transparent 80%);
-    }
 
-    .container{
-      max-width: 1180px;
-      margin: 0 auto;
-      padding: 0 16px;
-    }
+    a{ color: inherit; text-decoration:none }
+    a:hover{ text-decoration:underline }
 
-    .site-header{
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      padding: 14px 0;
-      backdrop-filter: blur(12px);
-      background: rgba(7,10,20,.55);
+    .container{ max-width: var(--max); margin: 0 auto; padding: 0 16px; }
+
+    /* Top bar */
+    .topbar{
+      background:#0e1012;
       border-bottom: 1px solid rgba(255,255,255,.08);
+      color: rgba(255,255,255,.85);
+      font-size: 12px;
     }
-    .header-inner{
+    .topbar .inner{
       display:flex;
       align-items:center;
-      gap: 12px;
+      justify-content:space-between;
+      gap:12px;
+      padding: 10px 0;
+    }
+    .toplinks{ display:flex; gap:18px; flex-wrap:wrap; align-items:center; }
+    .toplinks a{ opacity:.9 }
+    .toplinks a:hover{ opacity:1 }
+    .login{
+      color: #7dd3fc;
+      font-weight: 900;
+      letter-spacing: .2px;
     }
 
+    /* Header */
+    .mast{
+      background: #3a3f44;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      box-shadow: inset 0 -1px 0 rgba(0,0,0,.25);
+    }
+    /* Header: rapat tapi logo besar */
+.mast .inner{
+  padding: 10px 0 10px;     /* <<< bikin tipis */
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap: 6px;                 /* <<< rapetin jarak antar elemen */
+  text-align:center;
+}
+
+.logoLine{ margin:0; }
+.badge{
+  font-family: "Orbitron", system-ui;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: .6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(0,0,0,.22);
+  border: 1px solid rgba(255,255,255,.14);
+}
+
+/* Ini kuncinya: crop area logo biar header nggak jadi tinggi */
+.logoCrop{
+  height: 120px;            /* tinggi header untuk logo */
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;          /* <<< potong ruang transparan */
+  margin: -6px 0 -10px;     /* <<< rapetin lagi */
+}
+
+  
     .brand{
-      display:flex;
-      align-items:center;
-      gap: 10px;
-      text-decoration:none;
-      color: inherit;
-      flex: 0 0 auto;
-      min-width: 0;
-    }
-    .logo{
-      width: 44px;
-      height: 44px;
-      border-radius: 16px;
-      background:
-        radial-gradient(circle at 30% 30%, rgba(255,255,255,.85), transparent 55%),
-        linear-gradient(135deg, var(--neon1), var(--neon2), var(--neon3));
-      box-shadow: 0 0 0 1px rgba(255,255,255,.18), 0 18px 40px rgba(168,85,247,.25);
-      display:grid;
-      place-items:center;
-      position:relative;
-      overflow:hidden;
-      flex: 0 0 auto;
-    }
-    .logo span{
-      font-weight: 1000;
-      color:#081020;
-      letter-spacing:.5px;
-      transform: translateY(-.5px);
-      text-shadow: 0 1px 0 rgba(255,255,255,.35);
-      font-size: 14px;
-    }
-    .brand-title{
-      display:flex;
-      flex-direction:column;
-      line-height:1.05;
-      min-width: 0;
-    }
-    .brand-title strong{
-      font-size: 14px;
-      letter-spacing:.2px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 240px;
-    }
-    .brand-title span{
-      font-size: 12px;
-      color: var(--muted);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 260px;
-    }
+  display:flex;
+  align-items:center;
+  text-decoration:none;
+}
 
-    .nav{
-      display:flex;
-      align-items:center;
-      gap: 10px;
-      flex:1;
-      min-width: 0;
-      justify-content: space-between;
-    }
-    .nav-left, .nav-right{
-      display:flex;
-      align-items:center;
-      gap: 10px;
-      min-width: 0;
-    }
+.brandLogo{
+  height: 170px;            /* <<< BESARIN logo */
+  width:auto;
+  display:block;
+  transform: translateY(-10px); /* geser sedikit biar pas */
+  filter: drop-shadow(0 10px 30px rgba(34,211,238,.22))
+          drop-shadow(0 20px 55px rgba(168,85,247,.16));
+}
 
-    .link{
-      text-decoration:none;
-      color: var(--text);
-      font-weight: 800;
-      font-size: 13px;
-      padding: 10px 10px;
-      border-radius: 12px;
-      transition: transform .15s ease, background .15s ease, box-shadow .15s ease;
-      white-space: nowrap;
-    }
-    .link:hover{
-      background: rgba(34,211,238,.10);
-      box-shadow: 0 0 0 1px rgba(34,211,238,.25);
-      transform: translateY(-1px);
-    }
+@media (max-width:680px){
+  .brandLogo{ height: 52px; }
+}
 
-    .dropdown{ position: relative; }
-    .dropbtn{
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
-      color:var(--text);
-      font-weight: 900;
-      padding: 10px 12px;
-      border-radius: 12px;
-      cursor: pointer;
-      display:flex;
-      align-items:center;
-      gap: 8px;
-      transition: box-shadow .15s ease, transform .15s ease, border-color .15s ease;
-      white-space: nowrap;
-    }
-    .dropbtn:hover{
-      transform: translateY(-1px);
-      border-color: rgba(34,211,238,.35);
-      box-shadow: 0 18px 40px rgba(0,0,0,.35);
-    }
-    .dropbtn:focus{
-      outline:none;
-      box-shadow: 0 0 0 4px rgba(34,211,238,.18);
-    }
-    .caret{
-      width: 10px; height: 10px;
-      border-right: 2px solid rgba(234,240,255,.85);
-      border-bottom: 2px solid rgba(234,240,255,.85);
-      transform: rotate(45deg);
-      margin-top:-2px;
-      opacity:.9;
-    }
+.brandMark{
+  width: 96px;
+  height: 96px;
+  border-radius: 22px;
+  display:grid;
+  place-items:center;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(255,255,255,.45), transparent 55%),
+    linear-gradient(135deg, rgba(14,165,233,1), rgba(29,78,216,1));
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,.22),
+    0 26px 70px rgba(14,165,233,.22);
+  overflow:hidden;
+  position:relative;
+}
+.brandMark::after{
+  content:"";
+  position:absolute;
+  inset:-40%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.14), transparent);
+  transform: rotate(18deg);
+  animation: shine 5.8s linear infinite;
+  opacity:.8;
+  pointer-events:none;
+}
+@keyframes shine{
+  0%{ transform: translateX(-25%) rotate(18deg); }
+  100%{ transform: translateX(25%) rotate(18deg); }
+}
+.brandMark span{
+  font-weight: 1000;
+  letter-spacing: 1px;
+  color:#071019;
+  text-shadow: 0 1px 0 rgba(255,255,255,.35);
+  font-size: 22px;
+}
+@media (max-width: 680px){
+  .brandMark{ width: 76px; height: 76px; border-radius: 18px; }
+  .brandMark span{ font-size: 18px; }
+}
 
-    .menu{
-      position:absolute;
-      top: calc(100% + 10px);
-      left: 0;
-      width: 300px;
-      background: rgba(7,10,20,.92);
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: 20px;
-      box-shadow: var(--shadow);
-      padding: 10px;
-      display:none;
-    }
-    .menu.open{display:block}
-    .menu .grid{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-    }
-    .chip{
+/* tagline: lebih gede + lebih “game” */
+.tagline{
+  font-family: "Orbitron", system-ui;
+  font-size: 18px;          /* <<< besarin */
+  font-weight: 700;
+  letter-spacing: .3px;
+  color: rgba(255,255,255,.92);
+  max-width: 980px;
+  line-height: 1.35;
+  margin-top: 2px;
+}
+
+/* Mobile */
+@media (max-width: 680px){
+  .logoCrop{ height: 96px; margin: -4px 0 -8px; }
+  .brandLogo{ height: 200px; transform: translateY(-8px); }
+  .tagline{ font-size: 16px; }
+}
+    .genreRow{
       display:flex;
-      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
       justify-content:center;
-      text-decoration:none;
-      padding: 10px 10px;
-      border-radius: 14px;
-      font-weight: 900;
-      font-size: 12px;
-      color: var(--text);
-      border: 1px solid rgba(255,255,255,.12);
-      background: linear-gradient(135deg, rgba(168,85,247,.10), rgba(34,211,238,.10));
-      transition: transform .15s ease, box-shadow .15s ease;
-    }
-    .chip:hover{
-      transform: translateY(-1px);
-      box-shadow: 0 0 0 1px rgba(168,85,247,.25), 0 18px 40px rgba(0,0,0,.35);
-    }
-
-    .search{
-      display:flex;
       align-items:center;
-      gap:8px;
-      background: rgba(255,255,255,.06);
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: 12px;
-      padding: 6px 10px;
-      min-width: 260px;
-      max-width: 360px;
+      padding: 2px 0 6px;
     }
-    .search input{
-      border:0;
-      outline:0;
-      width:100%;
-      font-size: 13px;
-      background: transparent;
-      color: var(--text);
-      min-width: 0;
-    }
-    .search input::placeholder{ color: rgba(234,240,255,.55) }
-
-    .cta{
-      border:0;
-      cursor:pointer;
-      font-weight: 1000;
-      font-size: 13px;
-      padding: 8px 12px;
-      border-radius: 12px;
-      color: #081020;
-      background: linear-gradient(135deg, var(--neon1), var(--neon2), var(--neon3));
-      box-shadow: 0 0 0 1px rgba(255,255,255,.18), 0 18px 40px rgba(34,211,238,.18);
-      transition: transform .15s ease;
-      white-space: nowrap;
-      flex: 0 0 auto;
-    }
-    .cta:hover{ transform: translateY(-1px); }
-
-    .hamburger{
-      display:none;
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
-      border-radius: 14px;
-      padding: 10px 12px;
-      cursor:pointer;
-      margin-left:auto;
-    }
-    .hamburger span{
-      display:block;
-      width: 18px;
-      height: 2px;
-      background: rgba(234,240,255,.9);
-      margin: 4px 0;
-      border-radius: 2px;
-    }
-
-    @media (max-width: 980px){
-      .search{ min-width: 220px; }
-      .brand-title span{ max-width: 210px; }
-    }
-    @media (max-width: 860px){
-      .hamburger{ display:inline-flex; }
-
-      .nav{
-        position: fixed;
-        left: 16px;
-        right: 16px;
-        top: 74px;
-        background: rgba(7,10,20,.92);
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(255,255,255,.12);
-        border-radius: 22px;
-        box-shadow: var(--shadow);
-        padding: 12px;
-        display:none;
-        flex-direction: column;
-        align-items: stretch;
-        gap: 12px;
-      }
-      .nav.open{ display:flex; }
-      .nav-left, .nav-right{
-        width:100%;
-        justify-content: flex-start;
-        flex-wrap: wrap;
-      }
-      .search{
-        width: 100%;
-        min-width: unset;
-        max-width: unset;
-      }
-      .menu{ position: static; width:100%; margin-top: 10px; }
-      .menu .grid{ grid-template-columns: 1fr 1fr; }
-    }
-
-    .page{
-      max-width: 1180px;
-      margin: 22px auto 40px;
-      padding: 0 16px;
-    }
-
-    .hero{
-      border-radius: 30px;
-      border: 1px solid rgba(255,255,255,.10);
-      background:
-        radial-gradient(circle at 20% 10%, rgba(168,85,247,.30), transparent 50%),
-        radial-gradient(circle at 85% 20%, rgba(34,211,238,.22), transparent 55%),
-        radial-gradient(circle at 55% 95%, rgba(249,115,22,.18), transparent 55%),
-        linear-gradient(135deg, rgba(255,255,255,.07), rgba(255,255,255,.04));
-      box-shadow: var(--shadow);
-      padding: 18px;
-      overflow:hidden;
-      position:relative;
-    }
-    .hero::after{
-      content:"";
-      position:absolute;
-      inset:-40%;
-      background: linear-gradient(90deg, transparent, rgba(34,211,238,.10), transparent);
-      transform: rotate(10deg);
-      animation: sweep 6s linear infinite;
-      pointer-events:none;
-      opacity:.7;
-    }
-    @keyframes sweep{
-      0%{ transform: translateX(-20%) rotate(10deg); }
-      100%{ transform: translateX(20%) rotate(10deg); }
-    }
-
-    .hero-inner{
-      display:grid;
-      grid-template-columns: 1.35fr .65fr;
-      gap: 14px;
-      align-items: center;
-      position:relative;
-      z-index:1;
-    }
-    .hero-badge{
+    .genrePill{
       display:inline-flex;
       align-items:center;
-      gap:8px;
-      padding: 9px 12px;
+      justify-content:center;
+      padding: 7px 12px;
       border-radius: 999px;
+      background: #0b5e7a;
+      border: 1px solid rgba(255,255,255,.22);
+      color: rgba(255,255,255,.95);
+      font-weight: 900;
       font-size: 12px;
-      font-weight: 1000;
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.06);
-      width: fit-content;
-      margin-bottom: 10px;
-      box-shadow: 0 0 0 1px rgba(34,211,238,.10);
-    }
-    .dot{
-      width:10px;height:10px;border-radius:99px;
-      background: linear-gradient(135deg, var(--neon1), var(--neon2), var(--neon3));
-      box-shadow: 0 0 18px rgba(34,211,238,.35);
-    }
-    .hero h1{
-      margin: 0 0 8px;
-      font-size: 32px;
       letter-spacing: .2px;
-      line-height: 1.08;
-    }
-    .hero p{
-      margin: 0 0 14px;
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.7;
-      max-width: 62ch;
-    }
-    .hero-actions{
-      display:flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      align-items:center;
-    }
-    .btn-ghost{
-      border: 1px solid rgba(255,255,255,.14);
-      background: rgba(255,255,255,.06);
-      color:var(--text);
-      font-weight: 1000;
-      font-size: 13px;
-      padding: 10px 14px;
-      border-radius: 14px;
       cursor:pointer;
-      transition: transform .15s ease, box-shadow .15s ease;
+      user-select:none;
+      transition: transform .12s ease, filter .12s ease;
     }
-    .btn-ghost:hover{
-      transform: translateY(-1px);
-      box-shadow: 0 0 0 1px rgba(168,85,247,.18), 0 18px 40px rgba(0,0,0,.35);
+    .genrePill:hover{ transform: translateY(-1px); filter: brightness(1.05); }
+    .genrePill.active{
+      background: linear-gradient(135deg, rgba(14,165,233,1), rgba(29,78,216,1));
+      border-color: rgba(255,255,255,.28);
     }
 
-    .hero-side{
-      background: rgba(255,255,255,.05);
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: 24px;
-      padding: 14px;
+    /* Main nav */
+    .nav{
+      background: #f1f3f5;
+      color:#111827;
+      border-top: 1px solid rgba(255,255,255,.08);
+      border-bottom: 1px solid rgba(0,0,0,.12);
     }
-    .stat{
+    .nav .inner{
       display:flex;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 10px 10px;
-      border-radius: 16px;
-      border: 1px dashed rgba(255,255,255,.16);
-      background: rgba(255,255,255,.04);
-      margin-bottom: 10px;
+      gap: 18px;
+      flex-wrap:wrap;
+      padding: 12px 0;
+      align-items:center;
+      justify-content:center;
+      font-weight: 900;
+      font-size: 14px;
     }
-    .stat strong{ font-size: 14px; font-weight:1000; }
-    .stat span{ font-size: 12px; color: var(--muted); }
-
-    @media (max-width: 860px){
-      .hero-inner{ grid-template-columns: 1fr; }
-      .hero h1{ font-size: 27px; }
+    .nav a{
+      color:#101316;
+      opacity:.9;
+      padding: 6px 8px;
+      border-radius: 10px;
+    }
+    .nav a:hover{
+      opacity:1;
+      background: rgba(14,165,233,.10);
+      text-decoration:none;
+      box-shadow: inset 0 0 0 1px rgba(14,165,233,.18);
     }
 
-    .section-title{
+    /* Featured */
+    .featured{
+      margin: 18px 0 18px;
+      background: transparent;
+    }
+    .featuredFrame{
+      border: 3px solid rgba(14,165,233,.55);
+      border-radius: 10px;
+      padding: 18px;
+      background: rgba(0,0,0,.22);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+    .featuredTitle{
       display:flex;
-      align-items:baseline;
-      justify-content: space-between;
+      align-items:center;
+      justify-content:space-between;
       gap: 12px;
-      margin: 18px 4px 10px;
+      margin-bottom: 12px;
+      color: rgba(255,255,255,.92);
+      font-weight: 1000;
+      letter-spacing:.2px;
     }
-    .section-title h2{
-      margin:0;
-      font-size: 16px;
-      letter-spacing: .2px;
-      font-weight:1000;
-    }
-    .section-title small{ color: var(--muted); }
+    .featuredTitle small{ color: rgba(255,255,255,.72); font-weight:800; }
 
-    .game-grid{
-      display:grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
+    .featControls{ display:flex; gap:10px; align-items:center; }
+    .iconBtn{
+      width: 38px; height: 38px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.08);
+      color: rgba(255,255,255,.92);
+      cursor:pointer;
+      font-weight: 1000;
+      user-select:none;
+    }
+    .iconBtn:hover{ filter:brightness(1.06); }
+
+    .featTrack{
+      display:flex;
       gap: 14px;
+      overflow:auto;
+      scroll-snap-type: x mandatory;
+      padding-bottom: 4px;
     }
-    @media (max-width: 1100px){ .game-grid{ grid-template-columns: repeat(4, 1fr); } }
-    @media (max-width: 900px){ .game-grid{ grid-template-columns: repeat(3, 1fr); } }
-    @media (max-width: 650px){ .game-grid{ grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 420px){ .game-grid{ grid-template-columns: 1fr; } }
-
-    .game-card{
-      padding: 10px;
-      border-radius: 18px;
-      background: rgba(255,255,255,.05);
-      border: 1px solid rgba(255,255,255,.10);
-      box-shadow: 0 8px 30px rgba(0,0,0,.25);
-      color: inherit;
+    .featTrack::-webkit-scrollbar{ height: 10px; }
+    .featTrack::-webkit-scrollbar-thumb{ background: rgba(255,255,255,.18); border-radius: 999px; }
+    .featCard{
+      flex: 0 0 210px;
+      scroll-snap-align: start;
+      border-radius: 10px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.16);
+      overflow:hidden;
+      position:relative;
+      box-shadow: 0 12px 34px rgba(0,0,0,.35);
+      cursor:pointer;
+      transition: transform .12s ease;
     }
-    .game-card:hover{
-      transform: translateY(-2px);
-      border-color: rgba(34,211,238,.35);
-      box-shadow: 0 18px 55px rgba(0,0,0,.45);
-    }
-
-    .thumb{
-      width: 100%;
-      aspect-ratio: 1 / 1;
-      border-radius: 14px;
-      border: 1px solid transparent;
-      background:
-        linear-gradient(135deg, rgba(255,255,255,.06), rgba(255,255,255,.03)) padding-box,
-        linear-gradient(135deg,
-          rgba(34,211,238,.95),
-          rgba(168,85,247,.85),
-          rgba(249,115,22,.65)
-        ) border-box;
-      position: relative;
-      overflow: hidden;
-      box-shadow:
-        inset 0 0 0 1px rgba(255,255,255,.10),
-        0 0 26px rgba(34,211,238,.35),
-        0 0 70px rgba(168,85,247,.28),
-        0 0 110px rgba(249,115,22,.16);
-    }
-
-    .thumb::after{
-      content:"";
-      position:absolute;
-      inset:0;
-      border-radius: inherit;
-      background: linear-gradient(180deg, transparent 55%, rgba(0,0,0,.45));
-      pointer-events:none;
-    }
-    .thumb img{
+    .featCard:hover{ transform: translateY(-2px); }
+    .featCard img{
       width:100%;
-      height:100%;
+      height: 130px;
       object-fit: cover;
       display:block;
-      border-radius: inherit;
-      filter: saturate(1.10) contrast(1.06);
-      transform: scale(1.01);
+      background:#111827;
     }
-
-    .thumb-overlay{
-      position: absolute;
-      left: 0; right: 0; bottom: 0;
-      padding: 12px 12px 12px;
-      background: linear-gradient(
-        180deg,
-        rgba(0,0,0,0) 0%,
-        rgba(0,0,0,.55) 45%,
-        rgba(0,0,0,.78) 100%
-      );
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
+    .featCard .cap{
+      padding: 10px 10px 12px;
+      color: rgba(255,255,255,.92);
     }
-
-    .game-name{
-      margin: 0;
-      font-weight: 1000;
+    .featCard .cap strong{
+      display:block;
       font-size: 13px;
-      line-height: 1.25;
-      letter-spacing: .2px;
-      text-shadow: 0 2px 10px rgba(0,0,0,.65);
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
+      line-height: 1.2;
+      letter-spacing:.2px;
+      margin-bottom: 8px;
+      max-height: 2.4em;
+      overflow:hidden;
     }
-
-    .game-meta{
-      display:flex;
-      flex-wrap:wrap;
-      gap: 6px;
-      align-items:center;
-    }
-
-    .tag{
+    .miniTags{ display:flex; gap:6px; flex-wrap:wrap; }
+    .miniTag{
       font-size: 11px;
-      font-weight: 950;
-      padding: 6px 8px;
+      font-weight: 900;
+      padding: 4px 8px;
       border-radius: 999px;
       border: 1px solid rgba(255,255,255,.18);
       background: rgba(255,255,255,.08);
-      color: rgba(234,240,255,.95);
-      backdrop-filter: blur(6px);
-      text-decoration: none;
+      color: rgba(255,255,255,.88);
+      user-select:none;
+    }
+
+    /* Layout: main content + sidebar */
+    .content{
+      margin-top: 14px;
+      display:grid;
+      grid-template-columns: 1fr 340px;
+      gap: 18px;
+      align-items:start;
+    }
+
+    @media (max-width: 980px){
+      .content{ grid-template-columns: 1fr; }
+    }
+
+    /* Left: posts */
+    .posts{
+      background: transparent;
+    }
+    .postCard{
+      background: var(--panel2);
+      color: #111827;
+      border-radius: 8px;
+      border: 1px solid rgba(0,0,0,.10);
+      box-shadow: 0 12px 40px rgba(0,0,0,.20);
+      overflow:hidden;
+      margin-bottom: 16px;
+    }
+    .postInner{
+      display:grid;
+      grid-template-columns: 230px 1fr;
+      gap: 0;
+    }
+    @media (max-width: 700px){
+      .postInner{ grid-template-columns: 1fr; }
+    }
+
+    .postThumb{
+      background: #0f172a;
+      border-right: 1px solid rgba(0,0,0,.08);
+      min-height: 210px;
+    }
+    .postThumb img{
+      width:100%;
+      height:100%;
+      min-height: 210px;
+      object-fit: cover;
+      display:block;
+      background:#0f172a;
+    }
+
+    .postBody{
+      padding: 14px 16px 16px;
+    }
+    .postTags{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom: 10px; }
+    .postTag{
       display:inline-flex;
       align-items:center;
       gap:6px;
-      cursor: default;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(2,132,199,.22);
+      background: rgba(14,165,233,.10);
+      color: #0f172a;
+      font-weight: 1000;
+      font-size: 12px;
+      user-select:none;
     }
-    a.tag{ cursor:pointer; }
-    a.tag:hover{
-      border-color: rgba(34,211,238,.40);
-      box-shadow: 0 0 14px rgba(34,211,238,.18);
+    .postTitle{
+      margin: 0 0 8px;
+      font-size: 22px;
+      font-weight: 1000;
+      letter-spacing:.2px;
+      line-height: 1.2;
     }
+    .postMeta{
+      font-size: 12px;
+      color: rgba(17,24,39,.65);
+      margin-bottom: 10px;
+      font-weight: 800;
+    }
+    .postDesc{
+      margin:0 0 12px;
+      color: rgba(17,24,39,.85);
+      line-height: 1.65;
+      font-size: 13px;
+    }
+    .postActions{
+      display:flex;
+      gap: 10px;
+      flex-wrap:wrap;
+      align-items:center;
+    }
+    .btn{
+      border:0;
+      cursor:pointer;
+      font-weight: 1000;
+      font-size: 13px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: #0b5e7a;
+      color: #ffffff;
+      transition: filter .12s ease, transform .12s ease;
+      user-select:none;
+    }
+    .btn:hover{ filter:brightness(1.05); transform: translateY(-1px); }
+    .btn.secondary{
+      background: #e5e7eb;
+      color:#111827;
+      border: 1px solid rgba(0,0,0,.10);
+    }
+    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
 
-    .tag.neon{
-      border-color: rgba(34,211,238,.40);
-      box-shadow: 0 0 14px rgba(34,211,238,.18);
-    }
-
+    /* Pager */
     .pager{
-      margin-top: 16px;
       display:flex;
+      justify-content:space-between;
       align-items:center;
-      justify-content: space-between;
       gap: 12px;
+      flex-wrap:wrap;
       padding: 12px;
-      border-radius: 18px;
-      border: 1px solid rgba(255,255,255,.10);
-      background: rgba(255,255,255,.04);
-    }
-    .pager-left{ color: var(--muted); font-size: 12px; }
-    .pager-controls{
-      display:flex;
-      align-items:center;
-      gap: 8px;
-      flex-wrap: wrap;
-      justify-content:flex-end;
-    }
-    .pbtn{
-      border: 1px solid rgba(255,255,255,.14);
       background: rgba(255,255,255,.06);
-      color: var(--text);
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 10px;
+      color: rgba(255,255,255,.88);
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    }
+    .pager .left{ font-size: 12px; color: rgba(255,255,255,.78); font-weight: 800; }
+    .pager .right{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:flex-end; }
+    .pbtn{
+      border: 1px solid rgba(255,255,255,.20);
+      background: rgba(255,255,255,.08);
+      color: rgba(255,255,255,.92);
       font-weight: 1000;
       font-size: 12px;
       padding: 8px 10px;
-      border-radius: 12px;
+      border-radius: 10px;
       cursor:pointer;
-      transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
-      min-width: 40px;
-      text-align:center;
+      user-select:none;
     }
-    .pbtn:hover{
-      transform: translateY(-1px);
-      border-color: rgba(168,85,247,.30);
-      box-shadow: 0 0 0 1px rgba(168,85,247,.12);
-    }
-    .pbtn[disabled]{
-      opacity:.45;
-      cursor:not-allowed;
-      transform:none;
-      box-shadow:none;
-    }
+    .pbtn:hover{ filter:brightness(1.06); }
+    .pbtn[disabled]{ opacity:.5; cursor:not-allowed; }
     .pbtn.active{
-      color:#081020;
-      background: linear-gradient(135deg, var(--neon1), var(--neon2));
-      border-color: rgba(255,255,255,.18);
-      box-shadow: 0 0 18px rgba(34,211,238,.18);
+      background: linear-gradient(135deg, rgba(14,165,233,1), rgba(29,78,216,1));
+      border-color: rgba(255,255,255,.25);
+      color:#071019;
     }
 
-    .empty{
-      border: 1px dashed rgba(255,255,255,.18);
-      background: rgba(255,255,255,.04);
-      border-radius: 18px;
-      padding: 14px;
-      color: var(--muted);
+    /* Sidebar */
+    .sidebar{
+      position: sticky;
+      top: 82px;
+    }
+    @media (max-width: 980px){
+      .sidebar{ position: static; }
+    }
+
+    .widget{
+      background: #ffffff;
+      color: #111827;
+      border: 1px solid rgba(0,0,0,.10);
+      border-radius: 8px;
+      box-shadow: 0 12px 40px rgba(0,0,0,.18);
+      margin-bottom: 16px;
+      overflow:hidden;
+    }
+    .widgetHead{
+      padding: 12px 12px 10px;
+      font-weight: 1000;
+      border-bottom: 1px solid rgba(0,0,0,.08);
+      background: #f3f4f6;
+    }
+    .widgetBody{ padding: 12px; }
+
+    .searchRow{
+      display:flex; gap:10px; align-items:center;
+    }
+    .searchRow input{
+      flex:1;
+      padding: 10px 10px;
+      border-radius: 6px;
+      border: 1px solid rgba(0,0,0,.18);
+      outline:none;
+      font-size: 13px;
+    }
+    .searchRow input:focus{
+      border-color: rgba(14,165,233,.55);
+      box-shadow: 0 0 0 3px rgba(14,165,233,.18);
+    }
+    .searchRow button{
+      padding: 10px 12px;
+      border-radius: 6px;
+      border:0;
+      font-weight: 1000;
+      cursor:pointer;
+      color:#fff;
+      background: #0b5e7a;
+    }
+    .hint{
+      margin-top: 10px;
+      font-size: 12px;
+      color: rgba(17,24,39,.72);
+      font-weight: 800;
+    }
+
+    .genreList{ display:flex; flex-direction:column; gap:10px; }
+    .gRow{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      font-weight: 900;
+      font-size: 13px;
+    }
+    .gRow a{ color: #0b5e7a; text-decoration:none; }
+    .gRow a:hover{ text-decoration:underline; }
+    .count{
+      background: #111827;
+      color:#fff;
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-weight: 1000;
+      opacity:.92;
+    }
+
+    /* Footer */
+    .footer{
+      margin-top: 24px;
+      padding: 18px 0 24px;
+      color: rgba(255,255,255,.75);
+      font-size: 12px;
+      border-top: 1px solid rgba(255,255,255,.10);
+      background: rgba(0,0,0,.18);
+    }
+    .footer .row{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap: 16px;
+      flex-wrap:wrap;
+    }
+    .footer strong{ color: rgba(255,255,255,.92); }
+    .footer a{ color: #7dd3fc; }
+
+    /* Small screens tweaks */
+    @media (max-width: 680px){
+      .brandName{ font-size: 30px; }
+      .postTitle{ font-size: 18px; }
+      .featCard{ flex-basis: 180px; }
     }
   </style>
 </head>
 
 <body>
-  <header class="site-header">
-    <div class="container">
-      <div class="header-inner">
-        <a class="brand" href="/">
-          <div class="logo" aria-hidden="true"><span>GG</span></div>
-          <div class="brand-title">
-            <strong>gameresmi.pw</strong>
-            <span>Portal game • rapi • cepat • “HUD approved”</span>
-          </div>
-        </a>
+  <div class="topbar">
+    <div class="container inner">
+      <div class="toplinks">
+        <a href="#contact">Contact Me</a>
+        <a href="#dmca">DMCA Report</a>
+        <a href="#support">Support Us</a>
+        <a href="#advertise">Advertise Here</a>
+      </div>
+      <a class="login" href="/admin/manage/" title="Admin">Login</a>
+    </div>
+  </div>
 
-        <button class="hamburger" id="hamburger" aria-label="Buka menu" aria-expanded="false">
-          <span></span><span></span><span></span>
-        </button>
+  <header class="mast">
+    <div class="container inner">
+      <div class="logoLine">
+        <span class="badge">Katalog Game</span>
+      </div>
 
-        <nav class="nav" id="nav">
-          <div class="nav-left">
-            <a class="link" href="/" id="homeLink">Home</a>
-            <a class="link" href="#" id="popularLink" title="Nanti bisa pakai sorting">Populer</a>
-            <a class="link" href="#" id="latestLink" title="Nanti bisa pakai sorting">Terbaru</a>
+<a class="brand" href="/" aria-label="TSGames">
+  <picture>
+    <source srcset="/assets/tsgames-logo.png" type="image/png">
+    <img class="brandLogo" src="/assets/tsgames-logo.png" alt="TSGames" decoding="async" fetchpriority="high">
+  </picture>
+</a>
 
-            <div class="dropdown">
-              <button class="dropbtn" id="genreBtn" aria-haspopup="true" aria-expanded="false">
-                Genre <span class="caret" aria-hidden="true"></span>
-              </button>
+          <div class="tagline">Cari judul favoritmu, pilih genre, lalu tekan Download di item yang kamu mau.</div>
+        </div>
+      </div>
 
-              <div class="menu" id="genreMenu" role="menu" aria-label="Daftar genre">
-                <div class="grid">
-                  <a class="chip" href="#" data-genre="Action" role="menuitem">Action</a>
-                  <a class="chip" href="#" data-genre="RPG" role="menuitem">RPG</a>
-                  <a class="chip" href="#" data-genre="Strategy" role="menuitem">Strategy</a>
-                  <a class="chip" href="#" data-genre="Sports" role="menuitem">Sports</a>
-                  <a class="chip" href="#" data-genre="Racing" role="menuitem">Racing</a>
-                  <a class="chip" href="#" data-genre="Adventure" role="menuitem">Adventure</a>
-                  <a class="chip" href="#" data-genre="Casual" role="menuitem">Casual</a>
-                  <a class="chip" href="#" data-genre="Simulation" role="menuitem">Simulation</a>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="nav-right">
-            <div class="search" role="search">
-              <input id="searchInput" type="search" placeholder="Cari game… (contoh: 'Hades')" />
-            </div>
-            <button class="cta" id="searchBtn" type="button">Cari</button>
-          </div>
-        </nav>
+      <div class="genreRow" id="genreRow" aria-label="Genre cepat">
+        <!-- genre pills (dinamis) -->
       </div>
     </div>
   </header>
 
-  <main class="page">
-    <section class="hero">
-      <div class="hero-inner">
-        <div>
-          <div class="hero-badge"><span class="dot" aria-hidden="true"></span> New drops • Patch notes • Clean download</div>
-          <h1>Rasa web game-nya dapet: neon, rapi, dan siap tempur.</h1>
-          <p>
-            Data list diambil real-time dari database. Tombol download lewat API (bucket bisa private).
-            Kalau list kosong, itu artinya DB kamu masih sepi—bukan salah monitor. 😄
-          </p>
-          <div class="hero-actions">
-            <button class="cta" type="button" onclick="scrollToGrid()">Lihat List Game</button>
-            <button class="btn-ghost" type="button" onclick="openGenre()">Browse Genre</button>
+  <nav class="nav" aria-label="Menu utama">
+    <div class="container inner">
+      <a href="/" id="navHome">Home</a>
+      <a href="#howto" id="navHow">How to download?</a>
+      <a href="#index" id="navIndex">Games Index</a>
+      <a href="#archive" id="navArchive">Games Archive</a>
+      <a href="#telegram" id="navTelegram">Telegram Channel</a>
+    </div>
+  </nav>
+
+  <main class="container">
+    <section class="featured" aria-label="Featured">
+      <div class="featuredFrame">
+        <div class="featuredTitle">
+          <div>Featured Picks <small id="featNote">pilihan cepat dari katalog</small></div>
+          <div class="featControls">
+            <button class="iconBtn" id="featPrev" type="button" aria-label="Geser kiri">‹</button>
+            <button class="iconBtn" id="featNext" type="button" aria-label="Geser kanan">›</button>
           </div>
         </div>
 
-        <aside class="hero-side" aria-label="Ringkasan">
-          <div class="stat">
-            <div><strong>15 / halaman</strong><br /><span>Pagination otomatis</span></div>
-            <strong>🧩</strong>
-          </div>
-          <div class="stat">
-            <div><strong>R2 Stream</strong><br /><span>Download aman</span></div>
-            <strong>📦</strong>
-          </div>
-          <div class="stat" style="margin-bottom:0">
-            <div><strong>D1 Metadata</strong><br /><span>List cepat</span></div>
-            <strong>⚡</strong>
-          </div>
-        </aside>
+        <div class="featTrack" id="featTrack">
+          <!-- featured cards -->
+        </div>
       </div>
     </section>
 
-    <div class="section-title" id="gridTop">
-      <h2>Game Terbaru</h2>
-      <small id="gridInfo">Memuat…</small>
-    </div>
+    <section class="content" aria-label="Konten">
+      <div class="posts">
+        <div id="posts"></div>
 
-    <section class="game-grid" id="gameGrid" aria-label="Daftar game"></section>
+        <div class="pager" id="pager">
+          <div class="left" id="pagerLeft">—</div>
+          <div class="right" id="pagerRight"></div>
+        </div>
+      </div>
 
-    <div class="pager" aria-label="Pagination">
-      <div class="pager-left" id="pagerLeft">—</div>
-      <div class="pager-controls" id="pagerControls"></div>
-    </div>
-  </main>
+      <aside class="sidebar" aria-label="Sidebar">
+        <div class="widget">
+          <div class="widgetHead">Find your games</div>
+          <div class="widgetBody">
+            <div class="searchRow">
+              <input id="searchInput" type="search" placeholder="Cari judul / genre / platform…" />
+              <button id="searchBtn" type="button">Search</button>
+            </div>
+            <div class="hint" id="activeHint">Tip: coba “RPG”, “Action”, “PC”, atau judul game.</div>
+          </div>
+        </div>
 
-  <script>
-    const PAGE_SIZE = 15;
+        <div class="widget">
+          <div class="widgetHead">Game Genres</div>
+          <div class="widgetBody">
+            <div class="genreList" id="genreList"></div>
+          </div>
+        </div>
 
-    const gridEl = document.getElementById("gameGrid");
-    const pagerLeftEl = document.getElementById("pagerLeft");
-    const pagerControlsEl = document.getElementById("pagerControls");
-    const gridInfoEl = document.getElementById("gridInfo");
-
-    const searchInput = document.getElementById("searchInput");
-    const searchBtn = document.getElementById("searchBtn");
-
-    let searchTimer = null;
-
-    function escapeHtml(str){
-      return String(str ?? "").replace(/[&<>"']/g, (m) => ({
-        "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
-      }[m]));
-    }
-
-    function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
-
-    function getStateFromUrl(){
-      const u = new URL(window.location.href);
-      const page = parseInt(u.searchParams.get("page") || "1", 10);
-      const q = (u.searchParams.get("q") || "").trim();
-      return {
-        page: Number.isFinite(page) && page > 0 ? page : 1,
-        q
-      };
-    }
-
-    function setStateToUrl({ page, q }){
-      const u = new URL(window.location.href);
-      u.searchParams.set("page", String(page));
-      if (q) u.searchParams.set("q", q);
-      else u.searchParams.delete("q");
-      history.pushState({ page, q }, "", u.toString());
-    }
-
-    async function fetchGames({ page, q }){
-      const u = new URL("/api/games", window.location.origin);
-      u.searchParams.set("page", String(page));
-      u.searchParams.set("limit", String(PAGE_SIZE));
-      if (q) u.searchParams.set("q", q);
-
-      const res = await fetch(u.toString(), { method: "GET" });
-      const text = await res.text();
-      let data = null;
-      try { data = text ? JSON.parse(text) : null; } catch {}
-
-      if (!res.ok) {
-        const msg = (data && data.error) ? data.error : (text || res.statusText);
-        throw new Error(`${res.status} ${msg}`);
-      }
-      return data;
-    }
-
-    function btn(label, disabled, onClick){
-      const b = document.createElement("button");
-      b.className = "pbtn";
-      b.textContent = label;
-      b.disabled = disabled;
-      b.addEventListener("click", onClick);
-      return b;
-    }
-
-    function pageBtn(page, current, q){
-      const b = document.createElement("button");
-      b.className = "pbtn" + (page === current ? " active" : "");
-      b.textContent = String(page);
-      b.addEventListener("click", () => goTo(page, q));
-      return b;
-    }
-
-    function ellipsis(){
-      const s = document.createElement("span");
-      s.style.opacity = ".7";
-      s.style.padding = "0 6px";
-      s.textContent = "…";
-      return s;
-    }
-
-    function renderPager(current, totalPages, start, end, total, q){
-      pagerLeftEl.textContent = total === 0 ? "—" : `Showing ${start}–${end} of ${total}`;
-
-      const windowSize = 7;
-      let from = Math.max(1, current - Math.floor(windowSize / 2));
-      let to = Math.min(totalPages, from + windowSize - 1);
-      from = Math.max(1, to - windowSize + 1);
-
-      const parts = [];
-      parts.push(btn("«", current === 1, () => goTo(1, q)));
-      parts.push(btn("‹", current === 1, () => goTo(current - 1, q)));
-
-      if (from > 1) {
-        parts.push(pageBtn(1, current, q));
-        if (from > 2) parts.push(ellipsis());
-      }
-      for (let p = from; p <= to; p++) parts.push(pageBtn(p, current, q));
-      if (to < totalPages) {
-        if (to < totalPages - 1) parts.push(ellipsis());
-        parts.push(pageBtn(totalPages, current, q));
-      }
-
-      parts.push(btn("›", current === totalPages, () => goTo(current + 1, q)));
-      parts.push(btn("»", current === totalPages, () => goTo(totalPages, q)));
-
-      pagerControlsEl.innerHTML = "";
-      parts.forEach(el => pagerControlsEl.appendChild(el));
-    }
-
-    function renderEmpty(msg){
-      gridEl.innerHTML = `<div class="empty" style="grid-column:1/-1">${escapeHtml(msg)}</div>`;
-    }
-
-    async function renderGrid(page, q){
-      gridInfoEl.textContent = "Memuat…";
-      gridEl.innerHTML = "";
-      pagerControlsEl.innerHTML = "";
-      pagerLeftEl.textContent = "—";
-
-      try{
-        const data = await fetchGames({ page, q });
-
-        const current = clamp(data.page, 1, data.totalPages);
-        const total = Number(data.total || 0);
-        const start = total === 0 ? 0 : ((current - 1) * data.limit + 1);
-        const end = total === 0 ? 0 : Math.min(current * data.limit, total);
-
-        if (total === 0) {
-          gridInfoEl.textContent = q ? `Tidak ada hasil untuk "${q}"` : "Belum ada game.";
-          renderEmpty(q
-            ? `Tidak ada hasil untuk "${q}". Coba kata lain (atau cek penulisan).`
-            : "Belum ada game di database. Upload dulu lewat /admin/upload.html."
-          );
-          return;
-        }
-
-        gridInfoEl.textContent = `Menampilkan ${start}–${end} dari ${total} • Halaman ${current}/${data.totalPages}`;
-
-        gridEl.innerHTML = (data.items || []).map(item => {
-          const title = escapeHtml(item.title);
-          const slug = escapeHtml(item.slug);
-          const genre = escapeHtml(item.genre || "—");
-          const platform = escapeHtml(item.platform || "—");
-          const cover = escapeHtml(item.cover_url || "https://picsum.photos/seed/gameresmi_fallback/600/600");
-
-          return `
-            <div class="game-card" title="${title}">
-              <div class="thumb">
-                <img alt="${title}" src="${cover}" loading="lazy" />
-                <div class="thumb-overlay">
-                  <div class="game-name">${title}</div>
-                  <div class="game-meta">
-                    <span class="tag neon">${genre}</span>
-                    <span class="tag">${platform}</span>
-                    <a class="tag" href="/api/download/${slug}">Download</a>
-                  </div>
-                </div>
+        <div class="widget" id="howto">
+          <div class="widgetHead">How to download?</div>
+          <div class="widgetBody">
+            <div style="font-size:13px; line-height:1.65; color:rgba(17,24,39,.84); font-weight:700">
+              <ol style="margin:0; padding-left: 18px">
+                <li>Pilih game dari daftar.</li>
+                <li>Tekan tombol <b>Download</b> pada item game.</li>
+                <li>Jika browser meminta konfirmasi, pilih <b>Save</b>.</li>
+              </ol>
+              <div style="margin-top:10px; color:rgba(17,24,39,.72); font-size:12px; font-weight:800">
+                Catatan: nama file, genre, dan platform bisa kamu lihat di kartu game.
               </div>
             </div>
-          `;
-        }).join("");
+          </div>
+        </div>
 
-        renderPager(current, data.totalPages, start, end, total, q);
+        <div class="widget" id="index">
+          <div class="widgetHead">Games Index</div>
+          <div class="widgetBody">
+            <div style="font-size:13px; line-height:1.65; color:rgba(17,24,39,.84); font-weight:700">
+              Gunakan pencarian atau klik genre untuk mempercepat filter. Kalau ingin “reset”, kosongkan pencarian lalu Search.
+            </div>
+          </div>
+        </div>
+      </aside>
+    </section>
+  </main>
 
-      } catch(e){
-        gridInfoEl.textContent = "Gagal memuat data.";
-        renderEmpty(`ERROR: ${e.message}`);
-      }
+  <footer class="footer" id="contact">
+    <div class="container row">
+      <div>
+        <strong>gameresmi.pw</strong><br/>
+        Koleksi game: cover, genre, platform, dan tautan unduhan per item.
+      </div>
+      <div id="dmca">
+        <strong>DMCA</strong><br/>
+        <a href="mailto:dmca@gameresmi.pw">dmca@gameresmi.pw</a>
+      </div>
+      <div id="support">
+        <strong>Support</strong><br/>
+        <a href="#support">Support Us</a>
+      </div>
+      <div id="advertise">
+        <strong>Advertise</strong><br/>
+        <a href="#advertise">Advertise Here</a>
+      </div>
+      <div id="telegram">
+        <strong>Telegram</strong><br/>
+        <a href="#" onclick="alert('Tambahkan link channel Telegram kamu di sini.'); return false;">Telegram Channel</a>
+      </div>
+    </div>
+  </footer>
+
+<script>
+  const PAGE_SIZE = 15;
+
+  const els = {
+    featTrack: document.getElementById("featTrack"),
+    featPrev: document.getElementById("featPrev"),
+    featNext: document.getElementById("featNext"),
+    posts: document.getElementById("posts"),
+    pagerLeft: document.getElementById("pagerLeft"),
+    pagerRight: document.getElementById("pagerRight"),
+    searchInput: document.getElementById("searchInput"),
+    searchBtn: document.getElementById("searchBtn"),
+    activeHint: document.getElementById("activeHint"),
+    genreRow: document.getElementById("genreRow"),
+    genreList: document.getElementById("genreList"),
+  };
+
+  function esc(s){
+    return String(s ?? "").replace(/[&<>"']/g, m => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+    }[m]));
+  }
+  function fmtDate(s){
+    if (!s) return "";
+    // kalau format D1: "2025-12-18 15:22:10"
+    const t = s.replace(" ", "T") + "Z";
+    const d = new Date(t);
+    if (isNaN(d.getTime())) return s;
+    return d.toLocaleDateString("id-ID", { year:"numeric", month:"long", day:"numeric" });
+  }
+  function fmtBytes(n){
+    n = Number(n || 0);
+    if (!n) return "-";
+    const u = ["B","KB","MB","GB"];
+    let i=0;
+    while (n >= 1024 && i < u.length-1){ n/=1024; i++; }
+    return `${n.toFixed(i===0?0:1)} ${u[i]}`;
+  }
+  function placeholderSvg(label){
+    const text = (label || "GAME").slice(0, 18);
+    const svg =
+`<svg xmlns="http://www.w3.org/2000/svg" width="800" height="450">
+  <defs>
+    <linearGradient id="g" x1="0" x2="1">
+      <stop offset="0" stop-color="#0ea5e9"/>
+      <stop offset="1" stop-color="#1d4ed8"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="450" fill="#0f172a"/>
+  <rect x="-40" y="-40" width="880" height="530" rx="26" fill="url(#g)" opacity=".22"/>
+  <rect x="60" y="70" width="680" height="310" rx="22" fill="rgba(255,255,255,.08)" stroke="rgba(255,255,255,.18)"/>
+  <text x="400" y="235" text-anchor="middle" font-family="system-ui,Segoe UI,Roboto" font-size="42" fill="rgba(255,255,255,.90)" font-weight="800">${esc(text)}</text>
+</svg>`;
+    return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+  }
+
+  function getState(){
+    const u = new URL(location.href);
+    const page = Math.max(1, parseInt(u.searchParams.get("page") || "1", 10) || 1);
+    const q = (u.searchParams.get("q") || "").trim();
+    return { page, q };
+  }
+  function setState({ page, q }){
+    const u = new URL(location.href);
+    u.searchParams.set("page", String(page || 1));
+    if (q) u.searchParams.set("q", q);
+    else u.searchParams.delete("q");
+    history.pushState({ page, q }, "", u.toString());
+  }
+
+  async function fetchGames({ page, limit, q }){
+    const u = new URL("/api/games", location.origin);
+    u.searchParams.set("page", String(page || 1));
+    u.searchParams.set("limit", String(limit || PAGE_SIZE));
+    if (q) u.searchParams.set("q", q);
+
+    const res = await fetch(u.toString(), { cache: "no-store" });
+    const ct = res.headers.get("content-type") || "";
+    const text = await res.text();
+
+    if (!ct.includes("application/json")){
+      const snippet = (text || "").slice(0, 220).replace(/[<>]/g, s => ({'<':'&lt;','>':'&gt;'}[s]));
+      throw new Error(`Response bukan JSON (${res.status}). Snippet: ${snippet}`);
     }
-
-    function goTo(page, q){
-      const target = Math.max(1, page);
-      setStateToUrl({ page: target, q: (q || "").trim() });
-      renderGrid(target, (q || "").trim());
-      document.getElementById("gridTop").scrollIntoView({ behavior: "smooth", block: "start" });
+    let data = null;
+    try { data = text ? JSON.parse(text) : null; } catch {}
+    if (!res.ok){
+      const msg = (data && data.error) ? data.error : (res.statusText || "Request gagal");
+      throw new Error(`${res.status} ${msg}`);
     }
+    return data || {};
+  }
 
-    function applySearch(q){
-      goTo(1, (q || "").trim());
-    }
-
-    function scrollToGrid(){
-      document.getElementById("gridTop").scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-
-    function openGenre(){
-      const genreMenu = document.getElementById("genreMenu");
-      const genreBtn = document.getElementById("genreBtn");
-      genreMenu.classList.add("open");
-      genreBtn.setAttribute("aria-expanded", "true");
-      document.getElementById("gridTop").scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-
-    // ====== Header interactions ======
-    const nav = document.getElementById('nav');
-    const hamburger = document.getElementById('hamburger');
-    hamburger.addEventListener('click', () => {
-      const open = nav.classList.toggle('open');
-      hamburger.setAttribute('aria-expanded', String(open));
+  function buildGenres(items){
+    const map = new Map();
+    (items || []).forEach(it => {
+      const g = String(it.genre || "").trim();
+      if (!g) return;
+      map.set(g, (map.get(g) || 0) + 1);
     });
+    return [...map.entries()].sort((a,b) => b[1]-a[1]);
+  }
 
-    const genreBtn = document.getElementById('genreBtn');
-    const genreMenu = document.getElementById('genreMenu');
-    function closeGenreMenu(){
-      genreMenu.classList.remove('open');
-      genreBtn.setAttribute('aria-expanded', 'false');
+  function renderGenrePills(genres, activeQ){
+    const top = genres.slice(0, 10).map(([name]) => name);
+    if (!top.length){
+      els.genreRow.innerHTML = "";
+      return;
     }
-    genreBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const open = genreMenu.classList.toggle('open');
-      genreBtn.setAttribute('aria-expanded', String(open));
-    });
-    document.addEventListener('click', () => closeGenreMenu());
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeGenreMenu();
-    });
 
-    // Genre chips -> set q=Genre
-    document.querySelectorAll(".chip[data-genre]").forEach(chip => {
-      chip.addEventListener("click", (e) => {
+    els.genreRow.innerHTML = top.map(g => {
+      const active = activeQ && activeQ.toLowerCase() === g.toLowerCase();
+      return `<button class="genrePill ${active ? "active" : ""}" data-genre="${esc(g)}" type="button">${esc(g)}</button>`;
+    }).join("");
+
+    els.genreRow.querySelectorAll("[data-genre]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const g = btn.getAttribute("data-genre") || "";
+        els.searchInput.value = g;
+        goTo(1, g);
+      });
+    });
+  }
+
+  function renderGenreList(genres){
+    if (!genres.length){
+      els.genreList.innerHTML = `<div style="color:rgba(17,24,39,.65); font-weight:800; font-size:12px">Belum ada genre.</div>`;
+      return;
+    }
+    els.genreList.innerHTML = genres.slice(0, 14).map(([g,c]) => {
+      return `
+        <div class="gRow">
+          <a href="#" data-genre="${esc(g)}">${esc(g)}</a>
+          <span class="count">${c}</span>
+        </div>
+      `;
+    }).join("");
+
+    els.genreList.querySelectorAll("[data-genre]").forEach(a => {
+      a.addEventListener("click", (e) => {
         e.preventDefault();
-        const g = chip.getAttribute("data-genre") || "";
-        closeGenreMenu();
-        searchInput.value = g;
-        applySearch(g);
+        const g = a.getAttribute("data-genre") || "";
+        els.searchInput.value = g;
+        goTo(1, g);
+      });
+    });
+  }
+
+  function renderFeatured(items){
+    const list = (items || []).slice(0, 10);
+    if (!list.length){
+      els.featTrack.innerHTML = `<div style="color:rgba(255,255,255,.75); font-weight:800">Belum ada featured.</div>`;
+      return;
+    }
+
+    els.featTrack.innerHTML = list.map(it => {
+      const title = it.title || it.slug || "Game";
+      const cover = it.cover_url || placeholderSvg(title);
+      const g = (it.genre || "").trim();
+      const p = (it.platform || "").trim();
+      return `
+        <div class="featCard" data-slug="${esc(it.slug)}" title="${esc(title)}">
+          <img src="${esc(cover)}" alt="${esc(title)}" loading="lazy" onerror="this.src='${placeholderSvg(title)}'"/>
+          <div class="cap">
+            <strong>${esc(title)}</strong>
+            <div class="miniTags">
+              ${g ? `<span class="miniTag">${esc(g)}</span>` : ``}
+              ${p ? `<span class="miniTag">${esc(p)}</span>` : ``}
+            </div>
+          </div>
+        </div>
+      `;
+    }).join("");
+
+    els.featTrack.querySelectorAll(".featCard").forEach(card => {
+      card.addEventListener("click", () => {
+        const slug = card.getAttribute("data-slug") || "";
+        const el = document.querySelector(`[data-post="${CSS.escape(slug)}"]`);
+        if (el) el.scrollIntoView({ behavior:"smooth", block:"start" });
       });
     });
 
-    // Search
-    searchInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") applySearch(searchInput.value);
-    });
-    searchBtn.addEventListener("click", () => applySearch(searchInput.value));
-    searchInput.addEventListener("input", () => {
-      clearTimeout(searchTimer);
-      searchTimer = setTimeout(() => applySearch(searchInput.value), 350);
+    els.featPrev.onclick = () => els.featTrack.scrollBy({ left: -520, behavior: "smooth" });
+    els.featNext.onclick = () => els.featTrack.scrollBy({ left:  520, behavior: "smooth" });
+  }
+
+  function renderPosts(data){
+    const items = Array.isArray(data.items) ? data.items : [];
+    const page = Number(data.page || 1);
+    const limit = Number(data.limit || PAGE_SIZE);
+    const total = Number(data.total || 0);
+    const totalPages = Number(data.totalPages || Math.max(1, Math.ceil(total / limit)) || 1);
+
+    if (!items.length){
+      els.posts.innerHTML = `
+        <div class="postCard">
+          <div class="postBody" style="padding:16px">
+            <div class="postTitle" style="margin:0 0 6px">Tidak ada hasil</div>
+            <div class="postDesc" style="margin:0">Coba ganti keyword atau pilih genre lain.</div>
+          </div>
+        </div>
+      `;
+      els.pagerLeft.textContent = "—";
+      els.pagerRight.innerHTML = "";
+      return;
+    }
+
+    els.posts.innerHTML = items.map(it => {
+      const title = it.title || it.slug || "Game";
+      const cover = it.cover_url || placeholderSvg(title);
+      const genre = (it.genre || "").trim();
+      const platform = (it.platform || "").trim();
+      const desc = (it.short_desc || "").trim() || "Klik Download untuk mengambil file game ini.";
+      const date = fmtDate(it.updated_at);
+      const size = fmtBytes(it.file_size_bytes);
+      const slug = it.slug || "";
+
+      return `
+        <article class="postCard" data-post="${esc(slug)}">
+          <div class="postInner">
+            <div class="postThumb">
+              <img src="${esc(cover)}" alt="${esc(title)}" loading="lazy" onerror="this.src='${placeholderSvg(title)}'"/>
+            </div>
+            <div class="postBody">
+              <div class="postTags">
+                ${genre ? `<span class="postTag">🎯 ${esc(genre)}</span>` : ``}
+                ${platform ? `<span class="postTag">🕹️ ${esc(platform)}</span>` : ``}
+                ${size !== "-" ? `<span class="postTag">📦 ${esc(size)}</span>` : ``}
+              </div>
+
+              <h3 class="postTitle">${esc(title)}</h3>
+              <div class="postMeta">${date ? esc(date) : ""} ${date ? "• " : ""}<span class="mono">${esc(slug)}</span></div>
+
+              <p class="postDesc">${esc(desc)}</p>
+
+              <div class="postActions">
+                <a class="btn" href="/api/download/${encodeURIComponent(slug)}" rel="noopener">Download</a>
+                <button class="btn secondary" type="button" data-copy="/api/download/${encodeURIComponent(slug)}">Copy link</button>
+              </div>
+            </div>
+          </div>
+        </article>
+      `;
+    }).join("");
+
+    // copy link
+    els.posts.querySelectorAll("[data-copy]").forEach(b => {
+      b.addEventListener("click", async () => {
+        const path = b.getAttribute("data-copy") || "";
+        const url = new URL(path, location.origin).toString();
+        try{
+          await navigator.clipboard.writeText(url);
+          b.textContent = "Copied ✓";
+          setTimeout(() => (b.textContent = "Copy link"), 1100);
+        }catch{
+          alert(url);
+        }
+      });
     });
 
-    // Back/forward
-    window.addEventListener("popstate", () => {
-      const st = getStateFromUrl();
-      searchInput.value = st.q;
-      renderGrid(st.page, st.q);
-    });
+    const start = total ? ((page - 1) * limit + 1) : 0;
+    const end = total ? Math.min(page * limit, total) : 0;
 
-    // Init
-    (function init(){
-      const st = getStateFromUrl();
-      searchInput.value = st.q;
-      renderGrid(st.page, st.q);
-    })();
-  </script>
+    els.pagerLeft.textContent = total
+      ? `Showing ${start}–${end} of ${total} • Page ${page}/${totalPages}`
+      : `Page ${page}`;
+
+    // pager buttons
+    els.pagerRight.innerHTML = "";
+    const mk = (label, disabled, onClick, cls="") => {
+      const btn = document.createElement("button");
+      btn.className = "pbtn" + (cls ? " " + cls : "");
+      btn.textContent = label;
+      btn.disabled = disabled;
+      btn.onclick = onClick;
+      return btn;
+    };
+
+    const st = getState();
+    const q = st.q || "";
+
+    els.pagerRight.appendChild(mk("«", page <= 1, () => goTo(1, q)));
+    els.pagerRight.appendChild(mk("‹", page <= 1, () => goTo(page - 1, q)));
+
+    // number window
+    const win = 6;
+    let from = Math.max(1, page - Math.floor(win/2));
+    let to = Math.min(totalPages, from + win);
+    from = Math.max(1, to - win);
+
+    for (let p = from; p <= to; p++){
+      els.pagerRight.appendChild(mk(String(p), false, () => goTo(p, q), p === page ? "active" : ""));
+    }
+
+    els.pagerRight.appendChild(mk("›", page >= totalPages, () => goTo(page + 1, q)));
+    els.pagerRight.appendChild(mk("»", page >= totalPages, () => goTo(totalPages, q)));
+  }
+
+  function setHint(q){
+    if (!q) {
+      els.activeHint.textContent = "Tip: coba “RPG”, “Action”, “PC”, atau judul game.";
+      return;
+    }
+    els.activeHint.innerHTML = `Filter aktif: <span class="mono">${esc(q)}</span> — kosongkan lalu Search untuk reset.`;
+  }
+
+  async function loadAll(){
+    const st = getState();
+    els.searchInput.value = st.q || "";
+    setHint(st.q || "");
+
+    // featured + genres: ambil pool kecil dari page 1
+    try{
+      const pool = await fetchGames({ page: 1, limit: 60, q: "" });
+      renderFeatured(pool.items || []);
+      const genres = buildGenres(pool.items || []);
+      renderGenrePills(genres, st.q || "");
+      renderGenreList(genres);
+    }catch(e){
+      // kalau pool gagal, tetap lanjut ke list agar halaman tidak “mati total”
+      renderFeatured([]);
+      els.genreRow.innerHTML = "";
+      els.genreList.innerHTML = `<div style="color:rgba(17,24,39,.65); font-weight:800; font-size:12px">Genre tidak tersedia.</div>`;
+    }
+
+    // list utama sesuai state
+    try{
+      const data = await fetchGames({ page: st.page, limit: PAGE_SIZE, q: st.q || "" });
+      renderPosts(data);
+    }catch(e){
+      els.posts.innerHTML = `
+        <div class="postCard">
+          <div class="postBody" style="padding:16px">
+            <div class="postTitle" style="margin:0 0 6px">Gagal memuat katalog</div>
+            <div class="postDesc" style="margin:0">ERROR: <span class="mono">${esc(e.message)}</span></div>
+          </div>
+        </div>
+      `;
+      els.pagerLeft.textContent = "—";
+      els.pagerRight.innerHTML = "";
+    }
+  }
+
+  function goTo(page, q){
+    const p = Math.max(1, Number(page || 1));
+    const qq = (q || "").trim();
+    setState({ page: p, q: qq });
+    setHint(qq);
+    loadAll();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  // Search actions
+  els.searchBtn.addEventListener("click", () => goTo(1, els.searchInput.value));
+  els.searchInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") goTo(1, els.searchInput.value);
+  });
+
+  window.addEventListener("popstate", () => loadAll());
+
+  // init
+  loadAll();
+</script>
 </body>
 </html>
