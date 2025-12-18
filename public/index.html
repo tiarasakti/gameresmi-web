@@ -509,49 +509,60 @@
     }
 
     /* genre di atas poster (maks 3 chip) */
-    .posterGenres{
-      display:flex;
-      gap:6px;
-      flex-wrap:wrap;
-      margin-bottom: 10px;
-      min-height: 0;
-    }
-    .posterGenreChip{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      padding: 5px 9px;
-      border-radius: 999px;
-      font-size: 11px;
-      font-weight: 1000;
-      letter-spacing:.15px;
-      color: rgba(255,255,255,.92);
-      border: 1px solid rgba(255,255,255,.16);
-      background: rgba(255,255,255,.08);
-      user-select:none;
-      white-space: nowrap;
-      max-width: 100%;
-      overflow:hidden;
-      text-overflow: ellipsis;
-    }
+    /* Poster: square + genre overlay di dalam gambar */
+.posterFrame{
+  position: relative;
+  border-radius: 14px;
+  overflow:hidden;
+  border: 2px solid rgba(255,255,255,.14);
+  box-shadow: 0 16px 40px rgba(0,0,0,.35);
+  background: #0b1020;
 
-    .posterFrame{
-      border-radius: 14px;
-      overflow:hidden;
-      border: 2px solid rgba(255,255,255,.14);  /* <<< frame */
-      box-shadow: 0 16px 40px rgba(0,0,0,.35);
-      background: #0b1020;
-    }
-    .posterFrame img{
-      width:100%;
-      height: 210px;                  /* konsisten */
-      object-fit: cover;
-      display:block;
-      background:#0f172a;
-    }
-    @media (min-width: 741px){
-      .posterFrame img{ height: 250px; }
-    }
+  /* bikin persegi */
+  aspect-ratio: 1 / 1;
+}
+
+.posterFrame img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display:block;
+  background:#0f172a;
+}
+
+/* overlay genre chips (di dalam poster, pojok atas) */
+.posterOverlay{
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  display:flex;
+  gap:6px;
+  flex-wrap:wrap;
+  z-index: 2;
+  pointer-events: none; /* biar klik poster tetap aman */
+}
+
+.posterGenreChip{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding: 5px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 1000;
+  letter-spacing:.15px;
+  color: rgba(255,255,255,.95);
+  border: 1px solid rgba(255,255,255,.22);
+  background: rgba(0,0,0,.45);
+  backdrop-filter: blur(6px);
+  user-select:none;
+  white-space: nowrap;
+  max-width: 100%;
+  overflow:hidden;
+  text-overflow: ellipsis;
+}
+
 
     .postBody{ padding: 14px 16px 16px; }
     .postTags{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom: 10px; }
@@ -1206,11 +1217,12 @@
         <article class="postCard" data-post="${esc(slug)}">
           <div class="postInner">
             <div class="postThumb">
-              <div class="posterGenres">${genreTopHtml}</div>
-              <div class="posterFrame">
-                <img src="${esc(cover)}" alt="${esc(title)}" loading="lazy" onerror="this.src='${placeholderSvg(title)}'"/>
-              </div>
-            </div>
+  <div class="posterFrame">
+    <div class="posterOverlay">${genreTopHtml}</div>
+    <img src="${esc(cover)}" alt="${esc(title)}" loading="lazy" onerror="this.src='${placeholderSvg(title)}'"/>
+  </div>
+</div>
+
 
             <div class="postBody">
               <div class="postTags">
