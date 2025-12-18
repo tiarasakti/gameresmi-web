@@ -143,7 +143,7 @@
 
     /* FIX UTAMA: span inline -> width/height gak jalan, jadi bar-nya 0px */
     .menuIcon{
-      display:inline-block;      /* <<< ini yang bikin 3 garis muncul */
+      display:inline-block;
       width: 18px;
       height: 14px;
       position: relative;
@@ -419,13 +419,28 @@
       transition: transform .12s ease;
     }
     .featCard:hover{ transform: translateY(-2px); }
-    .featCard img{
+
+    /* frame poster featured biar tidak mepet */
+    .featPoster{
+      padding: 10px;
+      background: rgba(0,0,0,.20);
+      border-bottom: 1px solid rgba(255,255,255,.10);
+    }
+    .featPosterFrame{
+      border-radius: 12px;
+      overflow:hidden;
+      border: 2px solid rgba(255,255,255,.14);
+      box-shadow: 0 14px 32px rgba(0,0,0,.35);
+      background:#111827;
+    }
+    .featPosterFrame img{
       width:100%;
       height: 130px;
       object-fit: cover;
       display:block;
       background:#111827;
     }
+
     .featCard .cap{ padding: 10px 10px 12px; color: rgba(255,255,255,.92); }
     .featCard .cap strong{
       display:block;
@@ -480,18 +495,62 @@
       .postInner{ grid-template-columns: 1fr; }
     }
 
+    /* poster area: tambah padding + frame border */
     .postThumb{
       background: #0f172a;
       border-right: 1px solid rgba(0,0,0,.08);
-      min-height: 210px;
+      padding: 12px;                 /* <<< biar nggak mepet */
     }
-    .postThumb img{
+    @media (max-width: 700px){
+      .postThumb{
+        border-right: 0;
+        border-bottom: 1px solid rgba(0,0,0,.08);
+      }
+    }
+
+    /* genre di atas poster (maks 3 chip) */
+    .posterGenres{
+      display:flex;
+      gap:6px;
+      flex-wrap:wrap;
+      margin-bottom: 10px;
+      min-height: 0;
+    }
+    .posterGenreChip{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding: 5px 9px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 1000;
+      letter-spacing:.15px;
+      color: rgba(255,255,255,.92);
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.08);
+      user-select:none;
+      white-space: nowrap;
+      max-width: 100%;
+      overflow:hidden;
+      text-overflow: ellipsis;
+    }
+
+    .posterFrame{
+      border-radius: 14px;
+      overflow:hidden;
+      border: 2px solid rgba(255,255,255,.14);  /* <<< frame */
+      box-shadow: 0 16px 40px rgba(0,0,0,.35);
+      background: #0b1020;
+    }
+    .posterFrame img{
       width:100%;
-      height:100%;
-      min-height: 210px;
+      height: 210px;                  /* konsisten */
       object-fit: cover;
       display:block;
       background:#0f172a;
+    }
+    @media (min-width: 741px){
+      .posterFrame img{ height: 250px; }
     }
 
     .postBody{ padding: 14px 16px 16px; }
@@ -691,6 +750,7 @@
       .tagline{ font-size: 15px; }
       .featCard{ flex-basis: 180px; }
       .postTitle{ font-size: 18px; }
+      .posterFrame img{ height: 220px; }
     }
   </style>
 </head>
@@ -928,6 +988,15 @@
       "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
     }[m]));
   }
+
+  // genre bisa 1 atau "Action, Adventure, RPG"
+  function splitGenres(raw){
+    return String(raw || "")
+      .split(",")
+      .map(x => x.trim())
+      .filter(Boolean);
+  }
+
   function fmtDate(s){
     if (!s) return "";
     const t = s.replace(" ", "T") + "Z";
@@ -1001,9 +1070,8 @@
   function buildGenres(items){
     const map = new Map();
     (items || []).forEach(it => {
-      const g = String(it.genre || "").trim();
-      if (!g) return;
-      map.set(g, (map.get(g) || 0) + 1);
+      const arr = splitGenres(it.genre);
+      arr.forEach(g => map.set(g, (map.get(g) || 0) + 1));
     });
     return [...map.entries()].sort((a,b) => b[1]-a[1]);
   }
@@ -1063,17 +1131,24 @@
     els.featTrack.innerHTML = list.map(it => {
       const title = it.title || it.slug || "Game";
       const cover = it.cover_url || placeholderSvg(title);
-      const g = (it.genre || "").trim();
+      const genres = splitGenres(it.genre).slice(0, 3);  // <= maksimal 3 tampil
       const p = (it.platform || "").trim();
+
+      const tagsHtml = [
+        ...genres.map(g => `<span class="miniTag">${esc(g)}</span>`),
+        ...(p ? [`<span class="miniTag">${esc(p)}</span>`] : [])
+      ].join("");
+
       return `
         <div class="featCard" data-slug="${esc(it.slug)}" title="${esc(title)}">
-          <img src="${esc(cover)}" alt="${esc(title)}" loading="lazy" onerror="this.src='${placeholderSvg(title)}'"/>
+          <div class="featPoster">
+            <div class="featPosterFrame">
+              <img src="${esc(cover)}" alt="${esc(title)}" loading="lazy" onerror="this.src='${placeholderSvg(title)}'"/>
+            </div>
+          </div>
           <div class="cap">
             <strong>${esc(title)}</strong>
-            <div class="miniTags">
-              ${g ? `<span class="miniTag">${esc(g)}</span>` : ``}
-              ${p ? `<span class="miniTag">${esc(p)}</span>` : ``}
-            </div>
+            <div class="miniTags">${tagsHtml}</div>
           </div>
         </div>
       `;
@@ -1115,22 +1190,30 @@
     els.posts.innerHTML = items.map(it => {
       const title = it.title || it.slug || "Game";
       const cover = it.cover_url || placeholderSvg(title);
-      const genre = (it.genre || "").trim();
+
+      const genres = splitGenres(it.genre).slice(0, 3); // tampil maksimal 3
       const platform = (it.platform || "").trim();
       const desc = (it.short_desc || "").trim() || "Klik Download untuk mengambil file game ini.";
       const date = fmtDate(it.updated_at);
       const size = fmtBytes(it.file_size_bytes);
       const slug = it.slug || "";
 
+      const genreTopHtml = genres.length
+        ? genres.map(g => `<span class="posterGenreChip">${esc(g)}</span>`).join("")
+        : `<span class="posterGenreChip" style="opacity:.72">No genre</span>`;
+
       return `
         <article class="postCard" data-post="${esc(slug)}">
           <div class="postInner">
             <div class="postThumb">
-              <img src="${esc(cover)}" alt="${esc(title)}" loading="lazy" onerror="this.src='${placeholderSvg(title)}'"/>
+              <div class="posterGenres">${genreTopHtml}</div>
+              <div class="posterFrame">
+                <img src="${esc(cover)}" alt="${esc(title)}" loading="lazy" onerror="this.src='${placeholderSvg(title)}'"/>
+              </div>
             </div>
+
             <div class="postBody">
               <div class="postTags">
-                ${genre ? `<span class="postTag">🎯 ${esc(genre)}</span>` : ``}
                 ${platform ? `<span class="postTag">🕹️ ${esc(platform)}</span>` : ``}
                 ${size !== "-" ? `<span class="postTag">📦 ${esc(size)}</span>` : ``}
               </div>
