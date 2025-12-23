@@ -29,10 +29,16 @@
 <meta property="og:image:height" content="512" />
 
 <!-- Twitter -->
-<meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="TSGames: List & Download Game Terlengkap" />
 <meta name="twitter:description" content="Katalog game di gameresmi.pw. Cari judul, pilih genre, dan unduh game." />
-<meta name="twitter:image" content="https://gameresmi.pw/assets/tsgames-logo.png" />
+<meta property="og:image" content="https://gameresmi.pw/assets/og-cover.jpg" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="TSGames — Katalog & Download Game" />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://gameresmi.pw/assets/og-cover.jpg" />
+
 
 <!-- Extra -->
 <meta name="application-name" content="TSGames" />
@@ -500,13 +506,24 @@
       box-shadow: 0 14px 32px rgba(0,0,0,.35);
       background:#111827;
     }
-    .featPosterFrame img{
-      width:100%;
-      height: 130px;
-      object-fit: cover;
-      display:block;
-      background:#111827;
-    }
+.featPosterFrame{
+  border-radius: 12px;
+  overflow:hidden;
+  border: 2px solid rgba(255,255,255,.14);
+  box-shadow: 0 14px 32px rgba(0,0,0,.35);
+  background:#111827;
+
+  aspect-ratio: 1 / 1; /* bikin kotak */
+}
+
+.featPosterFrame img{
+  width:100%;
+  height:100%;
+  object-fit: cover;
+  display:block;
+  background:#111827;
+}
+
 
     .featCard .cap{ padding: 10px 10px 12px; color: rgba(255,255,255,.92); }
     .featCard .cap strong{
@@ -553,11 +570,12 @@
       overflow:hidden;
       margin-bottom: 16px;
     }
-    .postInner{
-      display:grid;
-      grid-template-columns: 230px 1fr;
-      gap: 0;
-    }
+.postInner{
+  display:grid;
+  grid-template-columns: 210px 1fr; /* match Featured */
+  gap: 0;
+}
+
     @media (max-width: 700px){
       .postInner{ grid-template-columns: 1fr; }
     }
@@ -828,7 +846,7 @@
       .tagline{ font-size: 15px; }
       .featCard{ flex-basis: 180px; }
       .postTitle{ font-size: 18px; }
-      .posterFrame img{ height: 220px; }
+      .posterFrame img{ height: 100%; }
     }
   </style>
 </head>
@@ -1290,12 +1308,25 @@
     });
   }
 
-  function renderFeatured(items){
-    const list = (items || []).slice(0, 10);
-    if (!list.length){
-      els.featTrack.innerHTML = `<div style="color:rgba(255,255,255,.75); font-weight:800">Belum ada featured.</div>`;
-      return;
-    }
+function tsDate(s){
+  if (!s) return 0;
+  const t = String(s).replace(" ", "T") + "Z";
+  const ms = Date.parse(t);
+  return isNaN(ms) ? 0 : ms;
+}
+
+function renderFeatured(items){
+  const list = [...(items || [])]
+    .sort((a,b) => tsDate(b.updated_at) - tsDate(a.updated_at)) // terbaru dulu
+    .slice(0, 5); // cuma 5 teratas
+
+  const note = document.getElementById("featNote");
+  if (note) note.textContent = "5 terbaru dari katalog";
+
+  if (!list.length){
+    els.featTrack.innerHTML = `<div style="color:rgba(255,255,255,.75); font-weight:800">Belum ada featured.</div>`;
+    return;
+  }
 
     els.featTrack.innerHTML = list.map(it => {
       const title = it.title || it.slug || "Game";
