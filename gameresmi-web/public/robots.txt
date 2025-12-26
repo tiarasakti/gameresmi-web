@@ -1,8 +1,0 @@
-User-agent: *
-Allow: /
-
-Disallow: /admin/
-Disallow: /api/
-
-Sitemap: https://gameresmi.pw/sitemap.xml
-Host: gameresmi.pw
