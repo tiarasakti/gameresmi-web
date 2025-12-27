@@ -3,6 +3,8 @@ Allow: /
 
 Disallow: /admin/
 Disallow: /api/
+Allow: /api/games
 
 Sitemap: https://gameresmi.pw/sitemap.xml
 Host: gameresmi.pw
+
