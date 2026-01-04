@@ -4,11 +4,11 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
 
-  <!-- ===== BRAND / SEO CORE ===== -->
-  <title>TSGames: List & Download Game Terlengkap</title>
-  <meta name="description" content="Katalog game di gameresmi.pw. Cari judul, pilih genre, dan unduh game." />
+  <!-- ===== BRAND / SEO CORE (SYNC) ===== -->
+  <title>Tiaratoto Games (TSGames) — List & Download Game Terlengkap</title>
+  <meta name="description" content="Katalog game di gameresmi.pw. Cari judul, pilih genre, lihat platform & ukuran file, lalu unduh dari halaman detail." />
 
-  <!-- Canonical (akan di-update JS sesuai ?q=&page=) -->
+  <!-- Canonical (di-update JS sesuai ?q=&page=, tanpa page=1) -->
   <link rel="canonical" href="https://gameresmi.pw/" />
 
   <!-- Robots -->
@@ -21,34 +21,32 @@
 
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="TSGames" />
+  <meta property="og:site_name" content="Tiaratoto Games" />
   <meta property="og:locale" content="id_ID" />
-  <meta property="og:title" content="TSGames: List & Download Game Terlengkap" />
-  <meta property="og:description" content="Katalog game di gameresmi.pw. Cari judul, pilih genre, dan unduh game." />
+  <meta property="og:title" content="Tiaratoto Games (TSGames) — List & Download Game Terlengkap" />
+  <meta property="og:description" content="Katalog game di gameresmi.pw. Cari judul, pilih genre, lihat platform & ukuran file, lalu unduh dari halaman detail." />
   <meta property="og:url" content="https://gameresmi.pw/" />
-
-  <!-- ✅ OG image dibuat satu sumber utama (hindari dobel og:image yang bikin share “acak”) -->
   <meta property="og:image" content="https://gameresmi.pw/assets/og-cover.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content="TSGames — Katalog & Download Game" />
+  <meta property="og:image:alt" content="Tiaratoto Games (TSGames) — Katalog & Download Game" />
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="TSGames: List & Download Game Terlengkap" />
-  <meta name="twitter:description" content="Katalog game di gameresmi.pw. Cari judul, pilih genre, dan unduh game." />
+  <meta name="twitter:title" content="Tiaratoto Games (TSGames) — List & Download Game Terlengkap" />
+  <meta name="twitter:description" content="Katalog game di gameresmi.pw. Cari judul, pilih genre, lihat platform & ukuran file, lalu unduh dari halaman detail." />
   <meta name="twitter:image" content="https://gameresmi.pw/assets/og-cover.jpg" />
 
   <!-- Extra -->
-  <meta name="application-name" content="TSGames" />
+  <meta name="application-name" content="Tiaratoto Games" />
   <meta name="referrer" content="strict-origin-when-cross-origin" />
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
+  <meta name="theme-color" content="#0ea5e9" />
 
   <!-- Performance kecil -->
-  <link rel="preload" as="image" href="assets/tsgames-logo.png" fetchpriority="high" />
+  <link rel="preload" as="image" href="/assets/tsgames-logo.png" fetchpriority="high" />
 
-  <!-- ===== JSON-LD base: Website + SearchAction + Organization ===== -->
-  <!-- ✅ Tambah alternateName + publisher + inLanguage biar brand “TSGames” makin kebaca konsisten -->
+  <!-- ===== JSON-LD base: Website + SearchAction + Organization (SYNC) ===== -->
   <script type="application/ld+json" id="ld-base">
   {
     "@context": "https://schema.org",
@@ -56,8 +54,8 @@
       {
         "@type": "WebSite",
         "@id": "https://gameresmi.pw/#website",
-        "name": "TSGames",
-        "alternateName": "TS Games",
+        "name": "Tiaratoto Games",
+        "alternateName": "TSGames",
         "url": "https://gameresmi.pw/",
         "inLanguage": "id-ID",
         "publisher": { "@id": "https://gameresmi.pw/#org" },
@@ -70,7 +68,7 @@
       {
         "@type": "Organization",
         "@id": "https://gameresmi.pw/#org",
-        "name": "TSGames",
+        "name": "Tiaratoto Games",
         "url": "https://gameresmi.pw/",
         "logo": {
           "@type": "ImageObject",
@@ -81,14 +79,14 @@
   }
   </script>
 
+  <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
 
   <!-- favicon -->
-  <link rel="icon" href="assets/tsgames-logo.png" type="image/png">
-  <link rel="apple-touch-icon" href="assets/tsgames-logo.png">
-  <meta name="theme-color" content="#0ea5e9">
+  <link rel="icon" href="/assets/tsgames-logo.png" type="image/png">
+  <link rel="apple-touch-icon" href="/assets/tsgames-logo.png">
 
   <style>
     :root{
@@ -126,7 +124,6 @@
     a:hover{ text-decoration:underline }
     button{ font:inherit; }
 
-    /* ✅ H1 untuk SEO/aksesibilitas tapi tidak mengganggu tampilan */
     .srOnly{
       position:absolute;
       width:1px;height:1px;
@@ -137,7 +134,6 @@
       border:0;
     }
 
-    /* padding biar nggak mepet + aman notch */
     .container{
       max-width: var(--max);
       margin: 0 auto;
@@ -145,11 +141,8 @@
       padding-right: max(16px, env(safe-area-inset-right));
     }
 
-    /* utilities (mobile-first, lebih kebal) */
     .desktopOnly{ display:none; }
     .mobileOnly{ display:block; }
-
-    /* desktop */
     @media (min-width: 741px){
       .desktopOnly{ display:block; }
       .mobileOnly{ display:none; }
@@ -178,17 +171,20 @@
     .toplinks a{ opacity:.9 }
     .toplinks a:hover{ opacity:1 }
 
-    /* Login: tombol 3D */
-    .login{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      padding: 10px 14px;
-      border-radius: 14px;
+    .ctaRow{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:flex-end; }
+    .ctaBtn{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding: 9px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.06);
+      color: rgba(255,255,255,.92);
       font-weight: 1000;
-      letter-spacing: .2px;
-      white-space: nowrap;
-
+      letter-spacing:.2px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .ctaBtn:hover{ filter:brightness(1.06); text-decoration:none; transform: translateY(-1px); }
+    .ctaBtn.primary{
       color:#071019;
       background: linear-gradient(180deg,#bfe9ff,#7dd3fc 40%,#38bdf8 70%,#0ea5e9);
       border: 1px solid rgba(255,255,255,.38);
@@ -196,18 +192,6 @@
         0 12px 26px rgba(0,0,0,.35),
         inset 0 1px 0 rgba(255,255,255,.65),
         inset 0 -4px 0 rgba(2,132,199,.70);
-      text-decoration:none !important;
-      transform: translateY(0);
-      transition: transform .12s ease, filter .12s ease, box-shadow .12s ease;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .login:hover{ filter: brightness(1.03); transform: translateY(-1px); }
-    .login:active{
-      transform: translateY(1px);
-      box-shadow:
-        0 7px 18px rgba(0,0,0,.35),
-        inset 0 1px 0 rgba(255,255,255,.55),
-        inset 0 -1px 0 rgba(2,132,199,.70);
     }
 
     /* Hamburger button */
@@ -226,19 +210,10 @@
       -webkit-tap-highlight-color: transparent;
     }
     .menuBtn:hover{ filter: brightness(1.06); }
-
-    /* FIX UTAMA: span inline -> width/height gak jalan, jadi bar-nya 0px */
-    .menuIcon{
-      display:inline-block;
-      width: 18px;
-      height: 14px;
-      position: relative;
-    }
+    .menuIcon{ display:inline-block; width: 18px; height: 14px; position: relative; }
     .menuIcon span{
-      position:absolute;
-      left:0; right:0;
-      height: 2px;
-      border-radius: 999px;
+      position:absolute; left:0; right:0;
+      height: 2px; border-radius: 999px;
       background: rgba(255,255,255,.95);
       display:block;
     }
@@ -318,11 +293,7 @@
       color: rgba(255,255,255,.85);
       letter-spacing:.2px;
     }
-    .mLinks{
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-    }
+    .mLinks{ display:flex; flex-direction:column; gap:8px; }
     .mLinks a{
       padding: 10px 10px;
       border-radius: 12px;
@@ -351,7 +322,6 @@
       gap: 6px;
       text-align:center;
     }
-
     .logoLine{ margin:0; }
     .badge{
       font-family: "Orbitron", system-ui;
@@ -363,9 +333,7 @@
       background: rgba(0,0,0,.22);
       border: 1px solid rgba(255,255,255,.14);
     }
-
     .brand{ display:flex; align-items:center; text-decoration:none; }
-
     .brandLogo{
       height: clamp(110px, 28vw, 170px);
       width:auto;
@@ -374,7 +342,6 @@
       filter: drop-shadow(0 10px 30px rgba(34,211,238,.22))
               drop-shadow(0 20px 55px rgba(168,85,247,.16));
     }
-
     .tagline{
       font-family: "Orbitron", system-ui;
       font-size: 18px;
@@ -447,7 +414,7 @@
       box-shadow: inset 0 0 0 1px rgba(14,165,233,.18);
     }
 
-    /* ✅ SEO Intro block (brand + katalog + download) */
+    /* SEO Intro */
     .seoIntro{
       margin: 14px 0 10px;
       padding: 14px 14px;
@@ -532,7 +499,6 @@
     }
     .featCard:hover{ transform: translateY(-2px); }
 
-    /* frame poster featured biar tidak mepet */
     .featPoster{
       padding: 10px;
       background: rgba(0,0,0,.20);
@@ -553,7 +519,6 @@
       display:block;
       background:#111827;
     }
-
     .featCard .cap{ padding: 10px 10px 12px; color: rgba(255,255,255,.92); }
     .featCard .cap strong{
       display:block;
@@ -604,12 +569,10 @@
       grid-template-columns: 210px 1fr;
       gap: 0;
     }
-
     @media (max-width: 700px){
       .postInner{ grid-template-columns: 1fr; }
     }
 
-    /* poster area: tambah padding + frame border */
     .postThumb{
       background: #0f172a;
       border-right: 1px solid rgba(0,0,0,.08);
@@ -639,7 +602,6 @@
       background:#0f172a;
     }
 
-    /* overlay genre chips (di dalam poster, pojok atas) */
     .posterOverlay{
       position: absolute;
       top: 10px;
@@ -863,7 +825,6 @@
     .footer strong{ color: rgba(255,255,255,.92); }
     .footer a{ color: #7dd3fc; }
 
-    /* Mobile tweaks */
     @media (max-width: 740px){
       .topbar .inner{ padding: 10px 0; }
       .tagline{ font-size: 15px; }
@@ -880,20 +841,23 @@
     <div class="container inner">
       <!-- Mobile hamburger -->
       <button class="menuBtn mobileOnly" id="menuBtn" type="button" aria-label="Buka menu" aria-expanded="false" aria-controls="mobileMenu">
-        <span class="menuIcon" aria-hidden="true">
-          <span></span><span></span><span></span>
-        </span>
+        <span class="menuIcon" aria-hidden="true"><span></span><span></span><span></span></span>
       </button>
 
       <!-- Desktop toplinks -->
       <div class="toplinks desktopOnly">
-        <a href="#contact">Contact Me</a>
-        <a href="#dmca">DMCA Report</a>
-        <a href="#support">Support Us</a>
-        <a href="#advertise">Advertise Here</a>
+        <a href="/download-game.html">Panduan Download</a>
+        <a href="#howto">How to download?</a>
+        <a href="#contact">Contact</a>
+        <a href="#dmca">DMCA</a>
       </div>
 
-      <a class="login" href="https://gameresmi.pw/" title="Admin">Login</a>
+      <div class="ctaRow">
+        <a class="ctaBtn" href="/download-game.html">Download Game</a>
+        <a class="ctaBtn" href="/tentang-tsgames.html">Tentang</a>
+        <a class="ctaBtn" href="https://gamesakti.pw/" rel="noopener">News/Guide</a>
+        <a class="ctaBtn primary" href="/admin/" title="Admin">Login</a>
+      </div>
     </div>
   </div>
 
@@ -909,21 +873,22 @@
       <div class="mGroup">
         <h4>Menu Utama</h4>
         <div class="mLinks">
-          <a href="./">Home</a>
+          <a href="/">Home</a>
+          <a href="/download-game.html">Panduan Download</a>
           <a href="#howto">How to download?</a>
           <a href="#index">Games Index</a>
           <a href="#archive">Games Archive</a>
-          <a href="#telegram">Telegram Channel</a>
+          <a href="/tentang-tsgames.html">Tentang</a>
         </div>
       </div>
 
       <div class="mGroup">
         <h4>Links</h4>
         <div class="mLinks">
-          <a href="#contact">Contact Me</a>
-          <a href="#dmca">DMCA Report</a>
-          <a href="#support">Support Us</a>
-          <a href="#advertise">Advertise Here</a>
+          <a href="https://gamesakti.pw/" rel="noopener">News/Guide</a>
+          <a href="#contact">Contact</a>
+          <a href="#dmca">DMCA</a>
+          <a href="/admin/">Admin</a>
         </div>
       </div>
     </div>
@@ -932,53 +897,44 @@
   <!-- Header -->
   <header class="mast">
     <div class="container inner">
-      <!-- ✅ H1 eksplisit untuk brand -->
-      <h1 class="srOnly">TSGames</h1>
+      <h1 class="srOnly">Tiaratoto Games (TSGames)</h1>
 
-      <div class="logoLine">
-        <span class="badge">Katalog Game</span>
-      </div>
+      <div class="logoLine"><span class="badge">Katalog Game</span></div>
 
-      <a class="brand" href="./" aria-label="TSGames">
+      <a class="brand" href="/" aria-label="TSGames">
         <picture>
-          <source srcset="assets/tsgames-logo.png" type="image/png">
-          <img class="brandLogo" src="assets/tsgames-logo.png" alt="TSGames" decoding="async" fetchpriority="high">
+          <source srcset="/assets/tsgames-logo.png" type="image/png">
+          <img class="brandLogo" src="/assets/tsgames-logo.png" alt="TSGames" decoding="async" fetchpriority="high">
         </picture>
       </a>
 
-      <div class="tagline">Cari judul favoritmu, pilih genre, lalu tekan Download di item yang kamu mau.</div>
+      <div class="tagline">Cari judul favoritmu, pilih genre, lalu tekan Download untuk membuka halaman detail.</div>
 
-      <div class="genreRow" id="genreRow" aria-label="Genre cepat">
-        <!-- genre pills (dinamis) -->
-      </div>
+      <div class="genreRow" id="genreRow" aria-label="Genre cepat"></div>
     </div>
   </header>
 
   <!-- Desktop nav -->
   <nav class="nav desktopOnly" aria-label="Menu utama">
     <div class="container inner">
-      <a href="./" id="navHome">Home</a>
+      <a href="/" id="navHome">Home</a>
+      <a href="/download-game.html" id="navGuide">Panduan Download</a>
       <a href="#howto" id="navHow">How to download?</a>
       <a href="#index" id="navIndex">Games Index</a>
       <a href="#archive" id="navArchive">Games Archive</a>
-      <a href="#telegram" id="navTelegram">Telegram Channel</a>
+      <a href="https://gamesakti.pw/" id="navNews" rel="noopener">News/Guide</a>
     </div>
   </nav>
 
   <main class="container">
-    <!-- ✅ Brand + Katalog + Download (natural, bukan spam) -->
     <section class="seoIntro" aria-label="Tentang TSGames">
-      <h2>TSGames — Katalog Game & Panduan Download</h2>
+      <h2>Tiaratoto Games (TSGames) — Katalog Game & Panduan Download</h2>
       <p>
-        TSGames adalah <b>katalog game</b> di gameresmi.pw: cari judul, filter genre, lihat platform & ukuran file, lalu unduh dari halaman detail.
+        TSGames adalah <b>katalog game</b> di gameresmi.pw: cari judul, filter genre, lihat platform & ukuran file, lalu unduh dari <b>halaman detail</b>.
       </p>
-      <p>
-        Mulai cepat: gunakan <a href="#howto">How to download</a> atau ketik genre seperti “RPG” / “Action” di kolom pencarian.
+      <p style="margin:0">
+        Mulai cepat: baca <a href="/download-game.html">Panduan Download</a> atau ketik genre seperti “RPG / Action” di kolom pencarian.
       </p>
-      <!-- Opsional: kalau nanti kamu bikin halaman landing statis, link ini sudah siap -->
-      <!-- <p style="margin:0">
-        Halaman cepat: <a href="/katalog-game.html">Katalog Game</a> · <a href="/download-game.html">Download Game</a> · <a href="/tentang-tsgames.html">Tentang TSGames</a>
-      </p> -->
     </section>
 
     <section class="featured" aria-label="Featured">
@@ -990,10 +946,7 @@
             <button class="iconBtn" id="featNext" type="button" aria-label="Geser kanan">›</button>
           </div>
         </div>
-
-        <div class="featTrack" id="featTrack">
-          <!-- featured cards -->
-        </div>
+        <div class="featTrack" id="featTrack"></div>
       </div>
     </section>
 
@@ -1033,10 +986,10 @@
               <ol style="margin:0; padding-left: 18px">
                 <li>Pilih game dari daftar.</li>
                 <li>Tekan tombol <b>Download</b> pada item game.</li>
-                <li>Jika browser meminta konfirmasi, pilih <b>Save</b>.</li>
+                <li>Kamu akan masuk ke halaman detail, lalu klik <b>Mulai Download</b>.</li>
               </ol>
               <div style="margin-top:10px; color:rgba(17,24,39,.72); font-size:12px; font-weight:800">
-                Catatan: nama file, genre, dan platform bisa kamu lihat di kartu game.
+                Catatan: idealnya tautan unduh mengarah ke sumber yang kamu kelola/resmi.
               </div>
             </div>
           </div>
@@ -1046,7 +999,16 @@
           <div class="widgetHead">Games Index</div>
           <div class="widgetBody">
             <div style="font-size:13px; line-height:1.65; color:rgba(17,24,39,.84); font-weight:700">
-              Gunakan pencarian atau klik genre untuk mempercepat filter. Kalau ingin “reset”, kosongkan pencarian lalu Search.
+              Gunakan pencarian atau klik genre untuk mempercepat filter. Untuk “reset”, kosongkan pencarian lalu Search.
+            </div>
+          </div>
+        </div>
+
+        <div class="widget" id="archive">
+          <div class="widgetHead">Games Archive</div>
+          <div class="widgetBody">
+            <div style="font-size:13px; line-height:1.65; color:rgba(17,24,39,.84); font-weight:700">
+              Arsip mengikuti data di katalog. Gunakan pagination untuk melihat halaman berikutnya.
             </div>
           </div>
         </div>
@@ -1058,23 +1020,17 @@
     <div class="container row">
       <div>
         <strong>gameresmi.pw</strong><br/>
-        Koleksi game: cover, genre, platform, dan tautan unduhan per item.
+        Katalog game: cover, genre, platform, ukuran file, dan tautan detail.
+      </div>
+      <div>
+        <strong>Quick</strong><br/>
+        <a href="/download-game.html">Panduan Download</a><br/>
+        <a href="/tentang-tsgames.html">Tentang</a><br/>
+        <a href="https://gamesakti.pw/" rel="noopener">News/Guide</a>
       </div>
       <div id="dmca">
         <strong>DMCA</strong><br/>
         <a href="mailto:dmca@gameresmi.pw">dmca@gameresmi.pw</a>
-      </div>
-      <div id="support">
-        <strong>Support</strong><br/>
-        <a href="#support">Support Us</a>
-      </div>
-      <div id="advertise">
-        <strong>Advertise</strong><br/>
-        <a href="#advertise">Advertise Here</a>
-      </div>
-      <div id="telegram">
-        <strong>Telegram</strong><br/>
-        <a href="#" onclick="alert('Tambahkan link channel Telegram kamu di sini.'); return false;">Telegram Channel</a>
       </div>
     </div>
   </footer>
@@ -1113,7 +1069,7 @@
   }
 
   function buildSeoText({ q, page, total, items }){
-    const baseTitle = "TSGames: List & Download Game Terlengkap";
+    const baseTitle = "Tiaratoto Games (TSGames) — List & Download Game Terlengkap";
     const cleanQ = (q || "").trim();
     const pageTxt = page > 1 ? ` • Halaman ${page}` : "";
     const title = cleanQ ? `${cleanQ} — TSGames${pageTxt}` : `${baseTitle}${pageTxt}`;
@@ -1121,26 +1077,35 @@
     const topNames = (items || []).slice(0, 3).map(x => x?.title).filter(Boolean);
     const extra = topNames.length ? ` Contoh: ${topNames.join(", ")}.` : "";
     const desc = cleanQ
-      ? `Cari dan download game "${cleanQ}" di TSGames. Lihat genre, platform, ukuran file, dan tautan unduhan.${extra}`
-      : `Katalog game di gameresmi.pw. Cari judul, pilih genre, dan unduh game. Update rutin dengan info genre, platform, dan ukuran file.${extra}`;
+      ? `Cari dan download game "${cleanQ}" di TSGames. Lihat genre, platform, ukuran file, lalu unduh dari halaman detail.${extra}`
+      : `Katalog game di gameresmi.pw. Cari judul, pilih genre, lihat platform & ukuran file, lalu unduh dari halaman detail.${extra}`;
 
     return { title, desc };
+  }
+
+  function cleanUrlForCanonical(){
+    const u = new URL(location.href);
+    // buang tracking
+    ["utm_source","utm_medium","utm_campaign","utm_term","utm_content","fbclid","gclid"].forEach(k => u.searchParams.delete(k));
+    // buang page=1 biar canonical bersih
+    const p = parseInt(u.searchParams.get("page") || "1", 10) || 1;
+    if (p <= 1) u.searchParams.delete("page");
+    return u.toString();
   }
 
   function applySeo({ q, page, total, items }){
     const { title, desc } = buildSeoText({ q, page, total, items });
 
-    const u = new URL(location.href);
-    ["utm_source","utm_medium","utm_campaign","utm_term","utm_content","fbclid","gclid"].forEach(k => u.searchParams.delete(k));
-    setCanonical(u.toString());
+    const canon = cleanUrlForCanonical();
+    setCanonical(canon);
 
     document.title = title;
     upsertMeta("name", "description", desc);
 
-    // OG/Twitter update
     upsertMeta("property", "og:title", title);
     upsertMeta("property", "og:description", desc);
-    upsertMeta("property", "og:url", u.toString());
+    upsertMeta("property", "og:url", canon);
+
     upsertMeta("name", "twitter:title", title);
     upsertMeta("name", "twitter:description", desc);
 
@@ -1150,7 +1115,7 @@
       return {
         "@type": "ListItem",
         "position": idx + 1,
-        "url": new URL(`download.html?slug=${encodeURIComponent(slug)}`, location.origin).toString(),
+        "url": new URL(`/download.html?slug=${encodeURIComponent(slug)}`, location.origin).toString(),
         "name": it?.title || slug
       };
     });
@@ -1183,7 +1148,6 @@
     if (menuBtn) menuBtn.addEventListener("click", () => setOpen(!document.body.classList.contains("menuOpen")));
     if (closeBtn) closeBtn.addEventListener("click", () => setOpen(false));
     if (overlay) overlay.addEventListener("click", () => setOpen(false));
-
     if (menu) menu.querySelectorAll("a").forEach(a => a.addEventListener("click", () => setOpen(false)));
 
     document.addEventListener("keydown", (e) => {
@@ -1211,7 +1175,6 @@
     }[m]));
   }
 
-  // genre bisa 1 atau "Action, Adventure, RPG"
   function splitGenres(raw){
     return String(raw || "")
       .split(",")
@@ -1258,12 +1221,19 @@
     const q = (u.searchParams.get("q") || "").trim();
     return { page, q };
   }
+
   function setState({ page, q }){
     const u = new URL(location.href);
-    u.searchParams.set("page", String(page || 1));
+    const p = Math.max(1, Number(page || 1));
+
+    // page=1 dibuang biar URL bersih
+    if (p <= 1) u.searchParams.delete("page");
+    else u.searchParams.set("page", String(p));
+
     if (q) u.searchParams.set("q", q);
     else u.searchParams.delete("q");
-    history.pushState({ page, q }, "", u.toString());
+
+    history.pushState({ page: p, q }, "", u.toString());
   }
 
   async function fetchGames({ page, limit, q }){
@@ -1280,6 +1250,7 @@
       const snippet = (text || "").slice(0, 220).replace(/[<>]/g, s => ({'<':'&lt;','>':'&gt;'}[s]));
       throw new Error(`Response bukan JSON (${res.status}). Snippet: ${snippet}`);
     }
+
     let data = null;
     try { data = text ? JSON.parse(text) : null; } catch {}
     if (!res.ok){
@@ -1428,7 +1399,7 @@
 
       const genres = splitGenres(it.genre).slice(0, 3);
       const platform = (it.platform || "").trim();
-      const desc = (it.short_desc || "").trim() || "Klik Download untuk mengambil file game ini.";
+      const desc = (it.short_desc || "").trim() || "Klik Download untuk membuka halaman detail.";
       const date = fmtDate(it.updated_at);
       const size = fmtBytes(it.file_size_bytes);
       const slug = it.slug || "";
@@ -1459,8 +1430,8 @@
               <p class="postDesc">${esc(desc)}</p>
 
               <div class="postActions">
-                <a class="btn" href="download.html?slug=${encodeURIComponent(slug)}" rel="noopener">Download</a>
-                <button class="btn secondary" type="button" data-copy="download.html?slug=${encodeURIComponent(slug)}">Copy link</button>
+                <a class="btn" href="/download.html?slug=${encodeURIComponent(slug)}" rel="noopener">Download</a>
+                <button class="btn secondary" type="button" data-copy="/download.html?slug=${encodeURIComponent(slug)}">Copy link</button>
               </div>
             </div>
           </div>
@@ -1471,7 +1442,7 @@
     els.posts.querySelectorAll("[data-copy]").forEach(b => {
       b.addEventListener("click", async () => {
         const path = b.getAttribute("data-copy") || "";
-        const url = new URL(path, location.href).toString();
+        const url = new URL(path, location.origin).toString();
         try{
           await navigator.clipboard.writeText(url);
           b.textContent = "Copied ✓";
@@ -1528,11 +1499,14 @@
 
   async function loadAll(){
     const st = getState();
+
+    // pre-SEO (biar canonical/title tidak blank)
     applySeo({ q: st.q || "", page: st.page || 1, total: 0, items: [] });
 
     els.searchInput.value = st.q || "";
     setHint(st.q || "");
 
+    // pool untuk featured + genre
     try{
       const pool = await fetchGames({ page: 1, limit: 60, q: "" });
       renderFeatured(pool.items || []);
@@ -1545,6 +1519,7 @@
       els.genreList.innerHTML = `<div style="color:rgba(17,24,39,.65); font-weight:800; font-size:12px">Genre tidak tersedia.</div>`;
     }
 
+    // page utama sesuai filter
     try{
       const data = await fetchGames({ page: st.page, limit: PAGE_SIZE, q: st.q || "" });
       renderPosts(data);
