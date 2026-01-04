@@ -1,10 +1,7 @@
 User-agent: *
 Allow: /
 
-Disallow: /admin/
+# Biar bot nggak buang-buang crawl budget ke endpoint API
 Disallow: /api/
-Allow: /api/games
 
 Sitemap: https://gameresmi.pw/sitemap.xml
-Host: gameresmi.pw
-
